@@ -1,6 +1,10 @@
 package main
 
 import (
+	"net"
+
+	"net/http"
+
 	"github.com/sirupsen/logrus"
 	"gopkg.in/workanator/vuego.v1/browser"
 	"gopkg.in/workanator/vuego.v1/server"
@@ -28,5 +32,12 @@ func main() {
 	}
 
 	// Start the server
-	logrus.Fatal(server.DefaultServer().Start(nil))
+	err := server.Server{
+		ListenIP:   net.ParseIP("127.0.0.1"),
+		ListenPort: 8008,
+	}.Start(nil)
+
+	if err != http.ErrServerClosed {
+		logrus.Fatal(err)
+	}
 }

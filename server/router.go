@@ -13,14 +13,14 @@ import (
 
 type Router struct {
 	StaticFS http.FileSystem
-	Logger   *logrus.Entry
+	log      *logrus.Entry
 }
 
 // DefaultRouter creates Router instance and initialize it with default values.
 func DefaultRouter() *Router {
 	return &Router{
 		StaticFS: parcello.Root("/"),
-		Logger:   logrus.NewEntry(logrus.StandardLogger()),
+		log:      logrus.NewEntry(logrus.StandardLogger()),
 	}
 }
 
@@ -28,7 +28,7 @@ func DefaultRouter() *Router {
 func (router *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
-	router.Logger.WithFields(logrus.Fields{
+	router.log.WithFields(logrus.Fields{
 		"$M": r.Method,
 		"$U": r.RequestURI,
 	}).Debug("Request")
