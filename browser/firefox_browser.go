@@ -2,7 +2,6 @@ package browser
 
 import (
 	"fmt"
-	"os"
 	"os/exec"
 
 	"github.com/sirupsen/logrus"
@@ -48,10 +47,6 @@ func (firefox) Launch(url string, options *Options) error {
 	}).Info("Exec")
 
 	if err := exec.Command("firefox", args...).Start(); err != nil {
-		if os.IsNotExist(err) {
-			return ErrBrowserNotFound{}
-		}
-
 		return err
 	}
 

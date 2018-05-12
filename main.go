@@ -5,6 +5,11 @@ import (
 
 	"net/http"
 
+	"sync/atomic"
+
+	"os"
+	"os/signal"
+
 	"github.com/sirupsen/logrus"
 	"gopkg.in/workanator/vuego.v1/browser"
 	"gopkg.in/workanator/vuego.v1/server"
@@ -15,29 +20,86 @@ func main() {
 	// Configure the logger
 	logrus.SetLevel(logrus.DebugLevel)
 
+	// Channels to determine which part of the application finished.
+	var (
+		partsRunning     int32
+		browserErrorChan = make(chan error)
+		serverErrorChan  = make(chan error)
+	)
+
+	defer close(browserErrorChan)
+	defer close(serverErrorChan)
+
 	// Start the browser
-	if err := browser.Lauch(
-		"http://127.0.0.1:8008/app.html",
-		&browser.Options{
-			NewInstance: false,
-			Window: &ui.WindowOptions{
-				Size: &ui.BoxSize{
-					Width: 800,
+	atomic.AddInt32(&partsRunning, 1)
+	go func() {
+		defer atomic.AddInt32(&partsRunning, -1)
+
+		err := browser.Lauch(
+			"http://127.0.0.1:8008/app.html",
+			&browser.Options{
+				NewInstance: false,
+				Window: &ui.WindowOptions{
+					Size: &ui.BoxSize{
+						Width: 800,
+					},
 				},
 			},
-		},
-		browser.Firefox(),
-	); err != nil {
-		logrus.WithError(err).Fatal("Failed to start application")
-	}
+			browser.Firefox(),
+		)
+
+		// Send the error.
+		if err != nil {
+			browserErrorChan <- err
+		}
+	}()
 
 	// Start the server
-	err := server.Server{
-		ListenIP:   net.ParseIP("127.0.0.1"),
-		ListenPort: 8008,
-	}.Start(nil)
+	atomic.AddInt32(&partsRunning, 1)
+	go func() {
+		defer atomic.AddInt32(&partsRunning, -1)
 
-	if err != http.ErrServerClosed {
-		logrus.Fatal(err)
+		err := server.Server{
+			ListenIP:   net.ParseIP("127.0.0.1"),
+			ListenPort: 8008,
+		}.Start(nil)
+
+		// Send the error.
+		if err != http.ErrServerClosed {
+			serverErrorChan <- err
+		}
+	}()
+
+	// React on OS signals.
+	sigint := make(chan os.Signal, 1)
+	signal.Notify(sigint, os.Interrupt)
+
+	// Wait until one part is finished.
+	interrupt := false
+	for !interrupt {
+		select {
+		case err := <-browserErrorChan:
+			if err != nil {
+				logrus.WithError(err).Error("Browser error")
+			} else {
+				logrus.Info("Browser finished")
+			}
+
+		case err := <-serverErrorChan:
+			if err != nil {
+				logrus.WithError(err).Error("Server error")
+			} else {
+				logrus.Info("Server finished")
+			}
+
+		case signal := <-sigint:
+			logrus.WithField("signal", signal).Info("Caught signal")
+			interrupt = true
+		}
+
+		// Check if all parts finished
+		if atomic.LoadInt32(&partsRunning) == 0 {
+			interrupt = true
+		}
 	}
 }

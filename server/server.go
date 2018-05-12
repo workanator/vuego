@@ -27,9 +27,16 @@ func (server Server) Start(screen ui.Screener) error {
 		return err
 	}
 
+	// Start the server
 	server.log.Info("Starting server")
+	err := http.ListenAndServe(":8008", server.Router)
 
-	return http.ListenAndServe(":8008", server.Router)
+	// Ignore server closed error.
+	if err != http.ErrServerClosed {
+		return err
+	}
+
+	return nil
 }
 
 // Prepares the server for start.
