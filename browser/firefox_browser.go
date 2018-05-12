@@ -2,16 +2,23 @@ package browser
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
+
+	"github.com/sirupsen/logrus"
 )
 
 type firefox struct{}
 
-func Firefox() Launcher {
+func Firefox() Browser {
 	return &firefox{}
 }
 
-func (firefox) Launch(url string, options *LaunchOptions) error {
+func (firefox) Name() string {
+	return "Firefox"
+}
+
+func (firefox) Launch(url string, options *Options) error {
 	// Prepare browser command line arguments
 	args := make([]string, 0)
 
@@ -32,7 +39,21 @@ func (firefox) Launch(url string, options *LaunchOptions) error {
 	}
 
 	// Open URL in new window
-	args = append(args, url)
+	args = append(args, "--new-tab", url)
 
-	return exec.Command("firefox", args...).Run()
+	// Execute the command
+	logrus.WithFields(logrus.Fields{
+		"bin":  "firefox",
+		"args": args,
+	}).Info("Exec")
+
+	if err := exec.Command("firefox", args...).Start(); err != nil {
+		if os.IsNotExist(err) {
+			return ErrBrowserNotFound{}
+		}
+
+		return err
+	}
+
+	return nil
 }

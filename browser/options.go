@@ -2,8 +2,7 @@ package browser
 
 import "gopkg.in/workanator/vuego.v1/ui"
 
-type LaunchOptions struct {
-	Priority    []Launcher
+type Options struct {
 	NewInstance bool
 	Window      *ui.WindowOptions
 }
