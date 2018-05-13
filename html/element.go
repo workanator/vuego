@@ -21,7 +21,7 @@ func (el *Element) Markup() string {
 	markup.WriteString(el.Attribute.Markup())
 
 	if el.Inner == nil {
-		markup.WriteString(" /")
+		markup.WriteString("/")
 	} else {
 		markup.WriteRune('>')
 		markup.WriteString(el.Inner.Markup())
