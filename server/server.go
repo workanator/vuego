@@ -5,6 +5,8 @@ import (
 
 	"net"
 
+	"fmt"
+
 	"github.com/sirupsen/logrus"
 	_ "gopkg.in/workanator/vuego.v1/resource"
 	"gopkg.in/workanator/vuego.v1/ui"
@@ -28,8 +30,9 @@ func (server Server) Start(screen ui.Screener) error {
 	}
 
 	// Start the server
-	server.log.Info("Starting server")
-	err := http.ListenAndServe(":8008", server.Router)
+	listenAddr := fmt.Sprintf("%s:%d", server.ListenIP.String(), server.ListenPort)
+	server.log.WithField("listen_addr", listenAddr).Info("Starting server")
+	err := http.ListenAndServe(listenAddr, server.Router)
 
 	// Ignore server closed error.
 	if err != http.ErrServerClosed {

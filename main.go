@@ -2,9 +2,6 @@ package main
 
 import (
 	"net"
-
-	"net/http"
-
 	"sync/atomic"
 
 	"os"
@@ -20,15 +17,29 @@ func main() {
 	// Configure the logger
 	logrus.SetLevel(logrus.DebugLevel)
 
-	// Channels to determine which part of the application finished.
+	// Track lifetime of the parts of the application.
 	var (
 		partsRunning     int32
-		browserErrorChan = make(chan error)
 		serverErrorChan  = make(chan error)
+		browserErrorChan = make(chan error)
 	)
 
 	defer close(browserErrorChan)
 	defer close(serverErrorChan)
+
+	// Start the server
+	atomic.AddInt32(&partsRunning, 1)
+	go func() {
+		defer atomic.AddInt32(&partsRunning, -1)
+
+		err := server.Server{
+			ListenIP:   net.ParseIP("127.0.0.1"),
+			ListenPort: 8008,
+		}.Start(nil)
+
+		// Send the error.
+		serverErrorChan <- err
+	}()
 
 	// Start the browser
 	atomic.AddInt32(&partsRunning, 1)
@@ -49,25 +60,7 @@ func main() {
 		)
 
 		// Send the error.
-		if err != nil {
-			browserErrorChan <- err
-		}
-	}()
-
-	// Start the server
-	atomic.AddInt32(&partsRunning, 1)
-	go func() {
-		defer atomic.AddInt32(&partsRunning, -1)
-
-		err := server.Server{
-			ListenIP:   net.ParseIP("127.0.0.1"),
-			ListenPort: 8008,
-		}.Start(nil)
-
-		// Send the error.
-		if err != http.ErrServerClosed {
-			serverErrorChan <- err
-		}
+		browserErrorChan <- err
 	}()
 
 	// React on OS signals.
