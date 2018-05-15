@@ -2,8 +2,8 @@ package html
 
 type Id string
 
-func (id *Id) Set(other string) {
-	*id = Id(other)
+func (id Id) IsEmpty() bool {
+	return len(id) == 0
 }
 
 func (id Id) Markup() string {

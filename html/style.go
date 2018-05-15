@@ -7,6 +7,10 @@ import (
 
 type Style map[string]string
 
+func (s *Style) IsEmpty() bool {
+	return len(*s) == 0
+}
+
 func (s *Style) Set(attr, style string) {
 	if *s == nil {
 		*s = make(map[string]string)

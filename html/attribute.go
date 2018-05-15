@@ -7,6 +7,10 @@ import (
 
 type Attribute map[string]interface{}
 
+func (a *Attribute) IsEmpty() bool {
+	return len(*a) == 0
+}
+
 func (a *Attribute) Has(name string) bool {
 	if *a != nil {
 		if _, ok := (*a)[name]; ok {

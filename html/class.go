@@ -4,6 +4,10 @@ import "strings"
 
 type Class []string
 
+func (c *Class) IsEmpty() bool {
+	return len(*c) == 0
+}
+
 func (c *Class) Has(cls string) bool {
 	if *c != nil {
 		return c.find(cls) != -1

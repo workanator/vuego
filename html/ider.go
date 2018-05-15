@@ -6,5 +6,5 @@ type Ider interface {
 	fmt.Stringer
 	Markuper
 
-	Set(id string)
+	IsEmpty() bool
 }
