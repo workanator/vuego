@@ -11,6 +11,16 @@ func (s *Style) IsEmpty() bool {
 	return len(*s) == 0
 }
 
+func (s *Style) Has(attr string) bool {
+	if *s != nil {
+		if _, ok := (*s)[attr]; ok {
+			return true
+		}
+	}
+
+	return false
+}
+
 func (s *Style) Set(attr, style string) {
 	if *s == nil {
 		*s = make(map[string]string)

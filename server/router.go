@@ -9,6 +9,8 @@ import (
 
 	"github.com/phogolabs/parcello"
 	"github.com/sirupsen/logrus"
+	"gopkg.in/workanator/vuego.v1/html"
+	"gopkg.in/workanator/vuego.v1/ui"
 )
 
 type Router struct {
@@ -47,11 +49,27 @@ func (router *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Server the request
 	switch segments[0] {
 	case "app.html":
+		e := &ui.Text{
+			Tag: ui.Tag{
+				Id: "app",
+				Style: html.Style{
+					"border": "4px double black",
+				},
+			},
+			Bounds: ui.Bounds{
+				Rect:     ui.Rect{}.WithLeft(100).WithRight(200),
+				Position: ui.PositionAbsolute,
+				Overflow: ui.OverflowHiddenXY,
+			},
+			Text: "{{ message }}",
+			Type: ui.TextBlockquote,
+		}
+
 		w.Header().Set("Content-Type", "text/html")
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("<!DOCTYPE html><html><head><script src=\"/static/js/vue.min.js\"></script></head><body>"))
-		w.Write([]byte("<div id=\"app\">{{ message }}</div>"))
-		w.Write([]byte("<script>var app = new Vue({el: '#app',data: {message: 'Zdarov, Vue!'}})</script>"))
+		w.Write([]byte(e.Render(nil, ui.Rect{}).Markup()))
+		w.Write([]byte("<script>var app = new Vue({el: '#app', data: {message: 'Zdarov, Vue!'}})</script>"))
 		w.Write([]byte("</body></html>"))
 		return
 
