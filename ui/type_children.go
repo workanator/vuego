@@ -3,7 +3,7 @@ package ui
 import "gopkg.in/workanator/vuego.v1/html"
 
 type Children struct {
-	Layout string
+	Layout Layouter
 	Items  []Componenter
 }
 
@@ -14,13 +14,18 @@ func (ch *Children) Len() int {
 func (ch *Children) Impose(el *html.Element) {
 }
 
-func (ch *Children) Render(parent *html.Element, viewport Rect) *html.Element {
+func (ch *Children) Render(parent *html.Element, viewport html.Rect) *html.Element {
 	// Return nil if there are no children.
 	if len(ch.Items) == 0 {
 		return nil
 	}
 
-	// Make the list of markapers in put them into the element.
+	// Use the layouter to render children items.
+	if ch.Layout != nil {
+		return ch.Layout.Layout(parent, viewport, ch.Items)
+	}
+
+	// Render children items in put them into the element.
 	items := make([]html.Markuper, len(ch.Items))
 	for k, item := range ch.Items {
 		items[k] = item.Render(parent, viewport)

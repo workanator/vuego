@@ -1,6 +1,4 @@
-package ui
-
-import "gopkg.in/workanator/vuego.v1/html"
+package html
 
 const (
 	OverflowInheritX Overflow = 0
@@ -38,7 +36,7 @@ func (o Overflow) Y() Overflow {
 	return o & overflowMaskY
 }
 
-func (o Overflow) Impose(el *html.Element) {
+func (o Overflow) Impose(el *Element) {
 	if el != nil {
 		// Impose overflow X style
 		switch o.X() {

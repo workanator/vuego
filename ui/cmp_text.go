@@ -39,7 +39,7 @@ func (Text) ExtendedClass() Classer {
 }
 
 // Render content into HTML Element.
-func (txt *Text) Render(parent *html.Element, viewport Rect) *html.Element {
+func (txt *Text) Render(parent *html.Element, viewport html.Rect) *html.Element {
 	el := txt.Tag.Element()
 	el.Class.Add("vg-text")
 
@@ -74,3 +74,6 @@ func (txt *Text) Render(parent *html.Element, viewport Rect) *html.Element {
 
 	return el
 }
+
+// Impose attributes to HTML Element.
+func (Text) Impose(el *html.Element) {}

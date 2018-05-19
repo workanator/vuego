@@ -1,6 +1,4 @@
-package ui
-
-import "gopkg.in/workanator/vuego.v1/html"
+package html
 
 const (
 	PositionInherit Position = iota
@@ -32,7 +30,7 @@ func (p Position) IsStatic() bool {
 	return p == PositionStatic
 }
 
-func (p Position) Impose(el *html.Element) {
+func (p Position) Impose(el *Element) {
 	if el != nil {
 		switch p {
 		case PositionInherit:

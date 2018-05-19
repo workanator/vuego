@@ -8,8 +8,8 @@ import (
 	"fmt"
 
 	"github.com/sirupsen/logrus"
+	"gopkg.in/workanator/vuego.v1/html"
 	_ "gopkg.in/workanator/vuego.v1/resource"
-	"gopkg.in/workanator/vuego.v1/ui"
 )
 
 type Server struct {
@@ -17,13 +17,13 @@ type Server struct {
 	ListenPort uint16
 	Router     http.Handler
 	log        *logrus.Entry
-	screens    []ui.Renderer
+	screens    []html.Renderer
 }
 
 // Start prepares the server instance and starts listen for incoming requests. If some fields in the struct omitted
 // they are initialized with default values. In most cases it's enough to provide valid ListenIP and ListenPort
 // to start the server. When server started it blocks further execution of the current goroutine.
-func (server Server) Start(screen ui.Renderer) error {
+func (server Server) Start(screen html.Renderer) error {
 	// Prepare the instance for start.
 	if err := server.prepare(); err != nil {
 		return err
@@ -56,7 +56,7 @@ func (server *Server) prepare() error {
 
 	// Initialize screen stack.
 	if server.screens == nil {
-		server.screens = make([]ui.Renderer, 0)
+		server.screens = make([]html.Renderer, 0)
 	}
 
 	return nil

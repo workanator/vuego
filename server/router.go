@@ -7,6 +7,8 @@ import (
 
 	_ "gopkg.in/workanator/vuego.v1/resource"
 
+	"io/ioutil"
+
 	"github.com/phogolabs/parcello"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/workanator/vuego.v1/html"
@@ -16,7 +18,7 @@ import (
 
 type Router struct {
 	StaticFS http.FileSystem
-	Renderer ui.Renderer
+	Renderer html.Renderer
 	log      *logrus.Entry
 }
 
@@ -51,31 +53,48 @@ func (router *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Server the request
 	switch segments[0] {
 	case "app":
-		e := &vuetify.App{
-			Dark: true,
+		f, err := router.StaticFS.Open("html/app.html")
+		if err != nil {
+			w.WriteHeader(http.StatusNotFound)
+			w.Write([]byte(err.Error()))
 		}
-		e := &ui.Text{
-			Tag: ui.Tag{
-				Id: "app",
-				Style: html.Style{
-					"border": "4px double black",
+
+		content, err := ioutil.ReadAll(f)
+		if err != nil {
+			w.WriteHeader(http.StatusNotFound)
+			w.Write([]byte(err.Error()))
+		}
+
+		body := string(content)
+		e := &vuetify.App{
+			Appearance: vuetify.Dark,
+			Children: ui.Children{
+				Items: []ui.Componenter{
+					&ui.Text{
+						Tag: ui.Tag{
+							Style: html.Style{
+								"border": "4px double black",
+							},
+						},
+						Bounds: ui.Bounds{
+							Rect:     html.Rect{}.WithLeft(100, html.Pixel).WithRight(200, html.Pixel),
+							Position: html.PositionAbsolute,
+							Overflow: html.OverflowHiddenXY,
+						},
+						Text: "{{ message }}",
+						Type: ui.TextBlockquote,
+					},
 				},
 			},
-			Bounds: ui.Bounds{
-				Rect:     ui.Rect{}.WithLeft(100).WithRight(200),
-				Position: ui.PositionAbsolute,
-				Overflow: ui.OverflowHiddenXY,
-			},
-			Text: "{{ message }}",
-			Type: ui.TextBlockquote,
 		}
+
+		body = strings.Replace(body, "#BODY.BEFORE#", e.Render(nil, html.Rect{}).Markup(), -1)
+		body = strings.Replace(body, "#BODY.AFTER#", "<script>var app = new Vue({el: '#app', data: {message: 'Zdarov, Vue!'}})</script>", -1)
 
 		w.Header().Set("Content-Type", "text/html")
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("<!DOCTYPE html><html><head><script src=\"/static/js/vue.min.js\"></script></head><body>"))
-		w.Write([]byte(e.Render(nil, ui.Rect{}).Markup()))
-		w.Write([]byte("<script>var app = new Vue({el: '#app', data: {message: 'Zdarov, Vue!'}})</script>"))
-		w.Write([]byte("</body></html>"))
+		w.Write([]byte(body))
+
 		return
 
 	case "static":
