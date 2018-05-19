@@ -14,7 +14,7 @@ func (AppClass) ExtendedClass() ui.Classer { return ui.ComponentClass{} }
 // Vuetify Application.
 type App struct {
 	ui.Tag
-	ui.Children
+	Layout     ui.Layouter
 	Appearance Appearance
 }
 
@@ -34,20 +34,25 @@ func (app *App) Render(parent *html.Element, viewport html.Rect) *html.Element {
 		app.Tag.Id = "app"
 	}
 
+	// Create content container
+	contentEl := &html.Element{
+		Tag: "v-content",
+	}
+
+	// Add children items
+	if app.Layout != nil {
+		contentEl.Inner = app.Layout.Layout(contentEl, viewport)
+	}
+
 	// Create application component
 	appEl := &html.Element{
-		Tag: "v-app",
-		Id:  app.Tag.Id + "-cmp",
+		Tag:   "v-app",
+		Id:    app.Tag.Id + "-cmp",
+		Inner: contentEl,
 	}
 
 	if app.Appearance != Default {
 		appEl.Attribute.Set(app.Appearance.String(), true)
-	}
-
-	// Add children items
-	if app.Children.Len() > 0 {
-		app.Children.Impose(appEl)
-		appEl.Inner = app.Children.Render(appEl, viewport)
 	}
 
 	// Create application container element

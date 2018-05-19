@@ -68,22 +68,24 @@ func (router *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		body := string(content)
 		e := &vuetify.App{
 			Appearance: vuetify.Dark,
-			Children: ui.Children{
-				Items: []ui.Componenter{
-					&ui.Text{
-						Tag: ui.Tag{
-							Style: html.Style{
-								"border": "4px double black",
-							},
+			Layout: ui.LayoutVertical{
+				&ui.Text{
+					Tag: ui.Tag{
+						Style: html.Style{
+							"border": "4px double black",
 						},
-						Bounds: ui.Bounds{
-							Rect:     html.Rect{}.WithLeft(100, html.Pixel).WithRight(200, html.Pixel),
-							Position: html.PositionAbsolute,
-							Overflow: html.OverflowHiddenXY,
-						},
-						Text: "{{ message }}",
-						Type: ui.TextBlockquote,
 					},
+					Text: "{{ message }}",
+					Type: ui.TextParagraph,
+				},
+				&ui.Text{
+					Tag: ui.Tag{
+						Style: html.Style{
+							"border": "4px double black",
+						},
+					},
+					Text: "{{ message }}",
+					Type: ui.TextParagraph,
 				},
 			},
 		}
