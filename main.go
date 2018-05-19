@@ -10,7 +10,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"gopkg.in/workanator/vuego.v1/browser"
 	"gopkg.in/workanator/vuego.v1/server"
-	"gopkg.in/workanator/vuego.v1/ui"
 )
 
 func main() {
@@ -50,10 +49,8 @@ func main() {
 			"http://127.0.0.1:8008/app",
 			&browser.Options{
 				NewInstance: false,
-				Window: &ui.WindowOptions{
-					Size: &ui.BoxSize{
-						Width: 800,
-					},
+				Window: browser.WindowOptions{
+					Width: 800,
 				},
 			},
 			browser.Firefox(),

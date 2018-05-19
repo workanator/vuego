@@ -26,16 +26,11 @@ func (firefox) Launch(url string, options *Options) error {
 		args = append(args, "--new-instance")
 	}
 
-	// Configure browser window
-	if options.Window != nil {
-		// Window size
-		if options.Window.Size != nil {
-			args = append(args,
-				"--window-size",
-				fmt.Sprintf("%d,%d", options.Window.Size.Width, options.Window.Size.Height),
-			)
-		}
-	}
+	// Configure browser window size
+	args = append(args,
+		"--window-size",
+		fmt.Sprintf("%d,%d", options.Window.Width, options.Window.Height),
+	)
 
 	// Open URL in new window
 	args = append(args, "--new-tab", url)
