@@ -12,6 +12,17 @@ type Element struct {
 }
 
 func (el *Element) Markup() string {
+	if len(el.Tag) == 0 {
+		// Render Inner elements only
+		if el.Inner != nil {
+			return el.Inner.Markup()
+		}
+
+		// Render nothing
+		return ""
+	}
+
+	// Render the whole element
 	markup := strings.Builder{}
 	markup.WriteRune('<')
 	markup.WriteString(el.Tag)

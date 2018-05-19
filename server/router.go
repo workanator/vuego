@@ -10,11 +10,13 @@ import (
 	"github.com/phogolabs/parcello"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/workanator/vuego.v1/html"
+	"gopkg.in/workanator/vuego.v1/theme/vuetify"
 	"gopkg.in/workanator/vuego.v1/ui"
 )
 
 type Router struct {
 	StaticFS http.FileSystem
+	Renderer ui.Renderer
 	log      *logrus.Entry
 }
 
@@ -48,7 +50,10 @@ func (router *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// Server the request
 	switch segments[0] {
-	case "app.html":
+	case "app":
+		e := &vuetify.App{
+			Dark: true,
+		}
 		e := &ui.Text{
 			Tag: ui.Tag{
 				Id: "app",
@@ -81,7 +86,15 @@ func (router *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusNotFound)
 				w.Write([]byte(err.Error()))
 			} else {
-				w.Header().Set("Content-Type", "application/javascript")
+				switch segments[1] {
+				case "js":
+					w.Header().Set("Content-Type", "application/javascript; charset=utf-8")
+				case "css":
+					w.Header().Set("Content-Type", "text/css; charset=utf-8")
+				case "html":
+					w.Header().Set("Content-Type", "text/html; charset=utf-8")
+				}
+
 				w.WriteHeader(http.StatusOK)
 				io.Copy(w, f)
 			}
