@@ -16,12 +16,8 @@ type Toolbar struct {
 	ui.Tag
 	Layout          ui.Layouter
 	Appearance      Appearance
-	Absolute        bool
-	Fixed           bool
-	App             bool
+	Position        html.Position // Absolute and Fixed
 	Card            bool
-	ClippedLeft     bool
-	ClippedRight    bool
 	Dense           bool
 	Extended        bool
 	ExtensionHeight string
@@ -30,7 +26,11 @@ type Toolbar struct {
 	Height          string
 	Prominent       bool
 	Tabs            bool
-	Scroll          struct {
+	Clipped         struct {
+		Left  bool
+		Right bool
+	}
+	Scroll struct {
 		Inverted         bool
 		Manual           bool
 		OffScreen        bool
@@ -52,12 +52,59 @@ func (Toolbar) ExtendedClass() ui.Classer {
 
 // Render content into HTML Element.
 func (tb *Toolbar) Render(parent *html.Element, viewport html.Rect) *html.Element {
-	if len(tb.Tag.Id) == 0 {
-		tb.Tag.Id = "app"
-	}
-
 	el := tb.Tag.Element()
 	el.Tag = "v-toolbar"
+	tb.Impose(el)
 
 	return el
+}
+
+// Apply attributes to HTML Element.
+func (tb *Toolbar) Impose(el *html.Element) {
+	if el != nil {
+		tb.Appearance.Impose(el)
+
+		switch tb.Position {
+		case html.PositionAbsolute:
+			el.Attribute.Set("absolute", true)
+		case html.PositionFixed:
+			el.Attribute.Set("fixed", true)
+		}
+
+		if tb.Card {
+			el.Attribute.Set("card", true)
+		}
+
+		if tb.Dense {
+			el.Attribute.Set("dense", true)
+		}
+
+		if tb.Extended {
+			el.Attribute.Set("extended", true)
+		}
+
+		if len(tb.ExtensionHeight) > 0 {
+			el.Attribute.Set("extension-height", tb.ExtensionHeight)
+		}
+
+		if tb.Flat {
+			el.Attribute.Set("flat", true)
+		}
+
+		if tb.Floating {
+			el.Attribute.Set("floating", tb.Floating)
+		}
+
+		if len(tb.Height) > 0 {
+			el.Attribute.Set("height", tb.Height)
+		}
+
+		if tb.Prominent {
+			el.Attribute.Set("prominent", true)
+		}
+
+		if tb.Tabs {
+			el.Attribute.Set("tabs", true)
+		}
+	}
 }

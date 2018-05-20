@@ -14,8 +14,12 @@ func (AppClass) ExtendedClass() ui.Classer { return ui.ComponentClass{} }
 // Vuetify Application.
 type App struct {
 	ui.Tag
-	Layout     ui.Layouter
+	Children   ui.Layouter
 	Appearance Appearance
+	Toolbar    struct {
+		Top    *Toolbar
+		Bottom *Toolbar
+	}
 }
 
 // Get class name.
@@ -40,19 +44,39 @@ func (app *App) Render(parent *html.Element, viewport html.Rect) *html.Element {
 	}
 
 	// Add children items
-	if app.Layout != nil {
-		contentEl.Inner = app.Layout.Layout(contentEl, viewport)
+	if app.Children != nil {
+		contentEl.Inner = app.Children.Layout(contentEl, viewport)
 	}
 
 	// Create application component
 	appEl := &html.Element{
-		Tag:   "v-app",
-		Id:    app.Tag.Id + "-cmp",
-		Inner: contentEl,
+		Tag: "v-app",
+		Id:  app.Tag.Id + "-cmp",
 	}
 
-	if app.Appearance != Default {
-		appEl.Attribute.Set(app.Appearance.String(), true)
+	app.Appearance.Impose(appEl)
+
+	// Make application layout
+	if app.Toolbar.Top == nil && app.Toolbar.Bottom == nil {
+		appEl.Inner = contentEl
+	} else {
+		items := make([]html.Markuper, 0, 3)
+
+		if app.Toolbar.Top != nil {
+			tbEl := app.Toolbar.Top.Render(appEl, viewport)
+			tbEl.Attribute.Set("app", true)
+			items = append(items, tbEl)
+		}
+
+		items = append(items, contentEl)
+
+		if app.Toolbar.Bottom != nil {
+			tbEl := app.Toolbar.Bottom.Render(appEl, viewport)
+			tbEl.Attribute.Set("app", true)
+			items = append(items, tbEl)
+		}
+
+		appEl.Inner = html.Multiple(items)
 	}
 
 	// Create application container element

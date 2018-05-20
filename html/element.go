@@ -4,6 +4,7 @@ import "strings"
 
 type Element struct {
 	Tag       string
+	Short     bool
 	Id        Id
 	Class     Class
 	Style     Style
@@ -32,7 +33,13 @@ func (el *Element) Markup() string {
 	markup.WriteString(el.Attribute.Markup())
 
 	if el.Inner == nil {
-		markup.WriteString("/")
+		if el.Short {
+			markup.WriteString("/")
+		} else {
+			markup.WriteRune('>')
+			markup.WriteString("</")
+			markup.WriteString(el.Tag)
+		}
 	} else {
 		markup.WriteRune('>')
 		markup.WriteString(el.Inner.Markup())

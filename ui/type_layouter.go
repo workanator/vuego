@@ -10,4 +10,7 @@ type Layouter interface {
 
 	// Items returns the slice of child components.
 	Items() []Componenter
+
+	// Len returns the number of child items.
+	Len() int
 }

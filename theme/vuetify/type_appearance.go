@@ -1,5 +1,7 @@
 package vuetify
 
+import "gopkg.in/workanator/vuego.v1/html"
+
 const (
 	Default Appearance = iota
 	Light
@@ -20,5 +22,14 @@ func (ap Appearance) String() string {
 		return "dark"
 	default:
 		return ""
+	}
+}
+
+func (ap Appearance) Impose(el *html.Element) {
+	if el != nil {
+		switch ap {
+		case Light, Dark:
+			el.Attribute.Set(ap.String(), true)
+		}
 	}
 }

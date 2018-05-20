@@ -2,9 +2,9 @@ package ui
 
 import "gopkg.in/workanator/vuego.v1/html"
 
-type LayoutVertical []Componenter
+type VerticalLayout []Componenter
 
-func (l LayoutVertical) Layout(parent *html.Element, viewport html.Rect) *html.Element {
+func (l VerticalLayout) Layout(parent *html.Element, viewport html.Rect) *html.Element {
 	// Return nil if there are no children.
 	if len(l) == 0 {
 		return nil
@@ -22,6 +22,10 @@ func (l LayoutVertical) Layout(parent *html.Element, viewport html.Rect) *html.E
 	}
 }
 
-func (l LayoutVertical) Items() []Componenter {
+func (l VerticalLayout) Items() []Componenter {
 	return l
+}
+
+func (l VerticalLayout) Len() int {
+	return len(l)
 }

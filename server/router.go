@@ -68,7 +68,13 @@ func (router *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		body := string(content)
 		e := &vuetify.App{
 			Appearance: vuetify.Dark,
-			Layout: ui.LayoutVertical{
+			Toolbar: struct {
+				Top    *vuetify.Toolbar
+				Bottom *vuetify.Toolbar
+			}{
+				Bottom: &vuetify.Toolbar{},
+			},
+			Children: ui.VerticalLayout{
 				&ui.Text{
 					Tag: ui.Tag{
 						Style: html.Style{
