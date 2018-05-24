@@ -9,12 +9,36 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"gopkg.in/workanator/vuego.v1/browser"
+	"gopkg.in/workanator/vuego.v1/model"
 	"gopkg.in/workanator/vuego.v1/server"
 )
 
 func main() {
 	// Configure the logger
 	logrus.SetLevel(logrus.DebugLevel)
+
+	m := &model.SharedModel{}
+
+	f1 := model.FieldModel{
+		Container: m,
+		Path:      []string{"Obj", "Id"},
+	}
+	f1.SetModel(os.Getpid())
+
+	f2 := model.FieldModel{
+		Container: m,
+		Path:      []string{"List"},
+	}
+	f2.SetModel([]string{"One", "Two", "Three"})
+
+	m.Field("q", "w", "e").Init("POI")
+
+	m.SetModel(map[string]interface{}{
+		"hello": "Hi!",
+	})
+
+	println(m.Markup())
+	return
 
 	// Track lifetime of the parts of the application.
 	var (
