@@ -17,21 +17,21 @@ func main() {
 	// Configure the logger
 	logrus.SetLevel(logrus.DebugLevel)
 
-	m := &model.SharedModel{}
+	m := &model.UniqueModel{}
 
 	f1 := model.FieldModel{
-		Container: m,
-		Path:      []string{"Obj", "Id"},
+		Owner: m,
+		Path:  []string{"Obj", "Id"},
 	}
 	f1.SetModel(os.Getpid())
 
 	f2 := model.FieldModel{
-		Container: m,
-		Path:      []string{"List"},
+		Owner: m,
+		Path:  []string{"List"},
 	}
 	f2.SetModel([]string{"One", "Two", "Three"})
 
-	m.Field("q", "w", "e").Init("POI")
+	m.Field("q", "w", "e").Initial("POI")
 
 	m.SetModel(map[string]interface{}{
 		"hello": "Hi!",

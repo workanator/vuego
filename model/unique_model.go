@@ -4,17 +4,17 @@ import (
 	"encoding/json"
 )
 
-// SharedModel represents a map object which data is shared and valid through screen session.
+// UniqueModel represents a map object which data is shared and valid through screen session.
 // The model is equivalent to the following code snippet.
 //
 //    new Vue({
-//      data: {/*MODEL*/}
+//      data: function() { return {/*MODEL*/} }
 //    })
-type SharedModel struct {
+type UniqueModel struct {
 	BasicModel
 }
 
-func (m *SharedModel) Field(path ...string) ModelInitialer {
+func (m *UniqueModel) Field(path ...string) ModelInitialer {
 	return ModelInitial{
 		Modeler: &FieldModel{
 			Owner: m,
@@ -23,7 +23,7 @@ func (m *SharedModel) Field(path ...string) ModelInitialer {
 	}
 }
 
-func (m *SharedModel) Markup() string {
+func (m *UniqueModel) Markup() string {
 	m.RLock()
 	defer m.RUnlock()
 
@@ -31,6 +31,6 @@ func (m *SharedModel) Markup() string {
 		s, _ := json.Marshal(err.Error())
 		return "new Vue({data:{MODEL_ERROR:" + string(s) + "}})"
 	} else {
-		return "new Vue({data:" + string(data) + "})"
+		return "new Vue({data:function(){return " + string(data) + "}})"
 	}
 }
