@@ -24,8 +24,8 @@ func (Component) ExtendedClass() Classer {
 }
 
 // Render content into HTML Element.
-func (Component) Render(parent *html.Element, viewport html.Rect) *html.Element {
-	return nil
+func (Component) Render(parent *html.Element, viewport html.Rect) (*html.Element, error) {
+	return nil, nil
 }
 
 // Impose attributes to HTML Element.

@@ -7,60 +7,14 @@ import (
 	"os"
 	"os/signal"
 
-	"fmt"
-
 	"github.com/sirupsen/logrus"
 	"gopkg.in/workanator/vuego.v1/browser"
-	"gopkg.in/workanator/vuego.v1/errors"
-	"gopkg.in/workanator/vuego.v1/model"
 	"gopkg.in/workanator/vuego.v1/server"
 )
 
 func main() {
 	// Configure the logger
 	logrus.SetLevel(logrus.DebugLevel)
-
-	m := &model.UniqueModel{}
-
-	f1 := model.FieldModel{
-		Owner: m,
-		Path:  []string{"Obj", "Id"},
-	}
-	f1.SetModel(os.Getpid())
-
-	f2 := model.FieldModel{
-		Owner: m,
-		Path:  []string{"List"},
-	}
-	f2.SetModel([]string{"One", "Two", "Three"})
-
-	m.Field("q", "w", "e").Initial("POI")
-
-	m.SetModel(map[string]interface{}{
-		"hello": "Hi!",
-	})
-
-	if markup, err := m.Markup(); err != nil {
-		panic(err)
-	} else {
-		println(markup)
-	}
-
-	e := errors.ErrMarkupFailed{
-		Tag: "body",
-		Reason: errors.ErrMarkupFailed{
-			Tag: "h1",
-			Id:  "header",
-			Reason: &errors.ErrMarkupFailed{
-				Tag:    "span",
-				Reason: fmt.Errorf("hola"),
-			},
-		},
-	}
-
-	println(e.Error())
-
-	return
 
 	// Track lifetime of the parts of the application.
 	var (

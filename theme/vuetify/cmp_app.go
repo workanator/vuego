@@ -1,6 +1,7 @@
 package vuetify
 
 import (
+	"gopkg.in/workanator/vuego.v1/errors"
 	"gopkg.in/workanator/vuego.v1/html"
 	"gopkg.in/workanator/vuego.v1/ui"
 )
@@ -33,7 +34,7 @@ func (App) ExtendedClass() ui.Classer {
 }
 
 // Render content into HTML Element.
-func (app *App) Render(parent *html.Element, viewport html.Rect) *html.Element {
+func (app *App) Render(parent *html.Element, viewport html.Rect) (*html.Element, error) {
 	if len(app.Tag.Id) == 0 {
 		app.Tag.Id = "app"
 	}
@@ -45,7 +46,15 @@ func (app *App) Render(parent *html.Element, viewport html.Rect) *html.Element {
 
 	// Add children items
 	if app.Children != nil {
-		contentEl.Inner = app.Children.Layout(contentEl, viewport)
+		if el, err := app.Children.Layout(contentEl, viewport); err != nil {
+			return nil, errors.ErrRenderFailed{
+				Class:  app.Class(),
+				Id:     app.Tag.Id.String(),
+				Reason: err,
+			}
+		} else {
+			contentEl.Inner = el
+		}
 	}
 
 	// Create application component
@@ -63,17 +72,31 @@ func (app *App) Render(parent *html.Element, viewport html.Rect) *html.Element {
 		items := make([]html.Markuper, 0, 3)
 
 		if app.Toolbar.Top != nil {
-			tbEl := app.Toolbar.Top.Render(appEl, viewport)
-			tbEl.Attribute.Set("app", true)
-			items = append(items, tbEl)
+			if tbEl, err := app.Toolbar.Top.Render(appEl, viewport); err != nil {
+				return nil, errors.ErrRenderFailed{
+					Class:  app.Class(),
+					Id:     app.Tag.Id.String(),
+					Reason: err,
+				}
+			} else {
+				tbEl.Attribute.Set("app", true)
+				items = append(items, tbEl)
+			}
 		}
 
 		items = append(items, contentEl)
 
 		if app.Toolbar.Bottom != nil {
-			tbEl := app.Toolbar.Bottom.Render(appEl, viewport)
-			tbEl.Attribute.Set("app", true)
-			items = append(items, tbEl)
+			if tbEl, err := app.Toolbar.Bottom.Render(appEl, viewport); err != nil {
+				return nil, errors.ErrRenderFailed{
+					Class:  app.Class(),
+					Id:     app.Tag.Id.String(),
+					Reason: err,
+				}
+			} else {
+				tbEl.Attribute.Set("app", true)
+				items = append(items, tbEl)
+			}
 		}
 
 		appEl.Inner = html.Multiple(items)
@@ -84,5 +107,5 @@ func (app *App) Render(parent *html.Element, viewport html.Rect) *html.Element {
 	el.Tag = "div"
 	el.Inner = appEl
 
-	return el
+	return el, nil
 }

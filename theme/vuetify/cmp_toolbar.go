@@ -51,12 +51,12 @@ func (Toolbar) ExtendedClass() ui.Classer {
 }
 
 // Render content into HTML Element.
-func (tb *Toolbar) Render(parent *html.Element, viewport html.Rect) *html.Element {
+func (tb *Toolbar) Render(parent *html.Element, viewport html.Rect) (*html.Element, error) {
 	el := tb.Tag.Element()
 	el.Tag = "v-toolbar"
 	tb.Impose(el)
 
-	return el
+	return el, nil
 }
 
 // Apply attributes to HTML Element.
