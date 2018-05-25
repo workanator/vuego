@@ -14,6 +14,7 @@ import (
 //    })
 type SharedModel struct {
 	BasicModel
+	Id string
 }
 
 func (m *SharedModel) Field(path ...string) ModelInitialer {
@@ -35,6 +36,11 @@ func (m *SharedModel) Markup() (string, error) {
 			Reason: err,
 		}
 	} else {
-		return "<script>new Vue({data:" + string(data) + "})</script>", nil
+		if len(m.Id) > 0 {
+			id, _ := json.Marshal("#" + m.Id)
+			return "<script>new Vue({el:" + string(id) + ",data:" + string(data) + "})</script>", nil
+		} else {
+			return "<script>new Vue({data:" + string(data) + "})</script>", nil
+		}
 	}
 }

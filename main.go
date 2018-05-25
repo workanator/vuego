@@ -10,6 +10,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"gopkg.in/workanator/vuego.v1/browser"
 	"gopkg.in/workanator/vuego.v1/server"
+	"gopkg.in/workanator/vuego.v1/test"
 )
 
 func main() {
@@ -34,7 +35,7 @@ func main() {
 		err := server.Server{
 			ListenIP:   net.ParseIP("127.0.0.1"),
 			ListenPort: 8008,
-		}.Start(nil)
+		}.Start(&test.App{})
 
 		// Send the error.
 		serverErrorChan <- err

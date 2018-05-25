@@ -11,14 +11,13 @@ import (
 
 	"github.com/phogolabs/parcello"
 	"github.com/sirupsen/logrus"
+	"gopkg.in/workanator/vuego.v1/app"
 	"gopkg.in/workanator/vuego.v1/html"
-	"gopkg.in/workanator/vuego.v1/theme/vuetify"
-	"gopkg.in/workanator/vuego.v1/ui"
 )
 
 type Router struct {
 	StaticFS http.FileSystem
-	Renderer html.Renderer
+	Screen   app.Screener
 	log      *logrus.Entry
 }
 
@@ -53,58 +52,9 @@ func (router *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Server the request
 	switch segments[0] {
 	case "app":
-		f, err := router.StaticFS.Open("html/app.html")
-		if err != nil {
-			w.WriteHeader(http.StatusNotFound)
-			w.Write([]byte(err.Error()))
+		if err := router.renderApp(w, r); err != nil {
+			router.renderError(w, r, err)
 		}
-
-		content, err := ioutil.ReadAll(f)
-		if err != nil {
-			w.WriteHeader(http.StatusNotFound)
-			w.Write([]byte(err.Error()))
-		}
-
-		body := string(content)
-		e := &vuetify.App{
-			Appearance: vuetify.Dark,
-			Toolbar: struct {
-				Top    *vuetify.Toolbar
-				Bottom *vuetify.Toolbar
-			}{
-				Bottom: &vuetify.Toolbar{},
-			},
-			Children: ui.VerticalLayout{
-				&ui.Text{
-					Tag: ui.Tag{
-						Style: html.Style{
-							"border": "4px double black",
-						},
-					},
-					Text: "{{ message }}",
-					Type: ui.TextParagraph,
-				},
-				&ui.Text{
-					Tag: ui.Tag{
-						Style: html.Style{
-							"border": "4px double black",
-						},
-					},
-					Text: "{{ message }}",
-					Type: ui.TextParagraph,
-				},
-			},
-		}
-
-		r, _ := e.Render(nil, html.Rect{})
-		m, _ := r.Markup()
-		body = strings.Replace(body, "#BODY.BEFORE#", m, -1)
-		body = strings.Replace(body, "#BODY.AFTER#", "<script>var app = new Vue({el: '#app', data: {message: 'Zdarov, Vue!'}})</script>", -1)
-
-		w.Header().Set("Content-Type", "text/html")
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(body))
-
 		return
 
 	case "static":
@@ -135,4 +85,96 @@ func (router *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusNotFound)
 	w.Write([]byte("404 Not Found :("))
+}
+
+func (router *Router) renderApp(w http.ResponseWriter, r *http.Request) error {
+	// Load file content
+	body, err := router.readFileContent("html/app.html")
+	if err != nil {
+		return err
+	}
+
+	// Render application parts
+	var (
+		title      string
+		headHtml   string
+		bodyHtml   string
+		modelsHtml string
+	)
+
+	if router.Screen != nil {
+		// Get title
+		title = router.Screen.Title()
+
+		// Render headers
+		if headEl := router.Screen.Head(); headEl != nil {
+			if markup, err := headEl.Markup(); err != nil {
+				return err
+			} else {
+				headHtml = markup
+			}
+		}
+
+		// Render body
+		if bodyCmp := router.Screen.Body(); bodyCmp != nil {
+			if bodyEl, err := bodyCmp.Render(nil, html.Rect{}); err != nil {
+				return err
+			} else if bodyEl != nil {
+				if markup, err := bodyEl.Markup(); err != nil {
+					return err
+				} else {
+					bodyHtml = markup
+				}
+			}
+		}
+
+		// Render modele
+		for _, m := range router.Screen.Models() {
+			if markup, err := m.Markup(); err != nil {
+				return err
+			} else {
+				if len(modelsHtml) > 0 {
+					modelsHtml += "\n"
+				}
+
+				modelsHtml += markup
+			}
+		}
+	}
+
+	// Process the template
+	body = strings.Replace(body, "#TITLE#", title, -1)
+	body = strings.Replace(body, "#HEAD#", headHtml, -1)
+	body = strings.Replace(body, "#BODY#", bodyHtml, -1)
+	body = strings.Replace(body, "#MODEL#", modelsHtml, -1)
+
+	// Write the response
+	w.Header().Set("Content-Type", "text/html")
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(body))
+
+	return nil
+}
+
+func (router *Router) renderError(w http.ResponseWriter, r *http.Request, err error) {
+	// Write the response
+	w.Header().Set("Content-Type", "text/html")
+	w.WriteHeader(http.StatusInternalServerError)
+	w.Write([]byte(err.Error()))
+}
+
+func (router *Router) readFileContent(path string) (string, error) {
+	// Open the application template
+	f, err := router.StaticFS.Open("html/app.html")
+	if err != nil {
+		return "", err
+	}
+
+	// Read the whole content of the template
+	content, err := ioutil.ReadAll(f)
+	if err != nil {
+		return "", err
+	}
+
+	return string(content), nil
 }

@@ -14,6 +14,7 @@ import (
 //    })
 type UniqueModel struct {
 	BasicModel
+	Id string
 }
 
 func (m *UniqueModel) Field(path ...string) ModelInitialer {
@@ -35,6 +36,11 @@ func (m *UniqueModel) Markup() (string, error) {
 			Reason: err,
 		}
 	} else {
-		return "<script>new Vue({data:function(){return " + string(data) + "}})</script>", nil
+		if len(m.Id) > 0 {
+			id, _ := json.Marshal("#" + m.Id)
+			return "<script>new Vue({el:" + string(id) + ",data:function(){return " + string(data) + "}})</script>", nil
+		} else {
+			return "<script>new Vue({data:function(){return " + string(data) + "}})</script>", nil
+		}
 	}
 }
