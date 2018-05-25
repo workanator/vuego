@@ -9,7 +9,7 @@ import (
 
 type VerticalLayout []Componenter
 
-func (l VerticalLayout) Layout(parent *html.Element, viewport html.Rect) (*html.Element, error) {
+func (l VerticalLayout) Render(parent *html.Element, viewport html.Rect) (*html.Element, error) {
 	// Return nil if there are no children.
 	if len(l) == 0 {
 		return nil, nil

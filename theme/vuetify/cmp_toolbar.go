@@ -14,7 +14,7 @@ func (ToolbarClass) ExtendedClass() ui.Classer { return ui.ComponentClass{} }
 // Vuetify Toolbar.
 type Toolbar struct {
 	ui.Tag
-	Layout          ui.Layouter
+	Layout          ui.ItemRenderer
 	Appearance      Appearance
 	Position        html.Position // Absolute and Fixed
 	Card            bool

@@ -15,7 +15,7 @@ func (AppClass) ExtendedClass() ui.Classer { return ui.ComponentClass{} }
 // Vuetify Application.
 type App struct {
 	ui.Tag
-	Children   ui.Layouter
+	Children   ui.ItemRenderer
 	Appearance Appearance
 	Toolbar    struct {
 		Top    *Toolbar
@@ -46,7 +46,7 @@ func (app *App) Render(parent *html.Element, viewport html.Rect) (*html.Element,
 
 	// Add children items
 	if app.Children != nil {
-		if el, err := app.Children.Layout(contentEl, viewport); err != nil {
+		if el, err := app.Children.Render(contentEl, viewport); err != nil {
 			return nil, errors.ErrRenderFailed{
 				Class:  app.Class(),
 				Id:     app.Tag.Id.String(),
