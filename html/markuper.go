@@ -1,5 +1,5 @@
 package html
 
 type Markuper interface {
-	Markup() string
+	Markup() (markup string, err error)
 }

@@ -2,6 +2,8 @@ package model
 
 import (
 	"encoding/json"
+
+	"gopkg.in/workanator/vuego.v1/errors"
 )
 
 // UniqueModel represents a map object which data is shared and valid through screen session.
@@ -23,14 +25,16 @@ func (m *UniqueModel) Field(path ...string) ModelInitialer {
 	}
 }
 
-func (m *UniqueModel) Markup() string {
+func (m *UniqueModel) Markup() (string, error) {
 	m.RLock()
 	defer m.RUnlock()
 
 	if data, err := json.Marshal(m.BasicModel.container); err != nil {
-		s, _ := json.Marshal(err.Error())
-		return "new Vue({data:{MODEL_ERROR:" + string(s) + "}})"
+		return "", errors.ErrMarkupFailed{
+			Tag:    "script",
+			Reason: err,
+		}
 	} else {
-		return "new Vue({data:function(){return " + string(data) + "}})"
+		return "<script>new Vue({data:function(){return " + string(data) + "}})</script>", nil
 	}
 }

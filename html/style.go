@@ -37,9 +37,9 @@ func (s *Style) Setf(attr, styleFormat string, args ...interface{}) {
 	(*s)[attr] = fmt.Sprintf(styleFormat, args...)
 }
 
-func (s *Style) Markup() string {
+func (s *Style) Markup() (string, error) {
 	if *s == nil || len(*s) == 0 {
-		return ""
+		return "", nil
 	}
 
 	markup := strings.Builder{}
@@ -53,5 +53,5 @@ func (s *Style) Markup() string {
 		markup.WriteString((*s)[k])
 	}
 
-	return " style=\"" + markup.String() + "\""
+	return " style=\"" + markup.String() + "\"", nil
 }

@@ -7,8 +7,11 @@ import (
 	"os"
 	"os/signal"
 
+	"fmt"
+
 	"github.com/sirupsen/logrus"
 	"gopkg.in/workanator/vuego.v1/browser"
+	"gopkg.in/workanator/vuego.v1/errors"
 	"gopkg.in/workanator/vuego.v1/model"
 	"gopkg.in/workanator/vuego.v1/server"
 )
@@ -37,7 +40,26 @@ func main() {
 		"hello": "Hi!",
 	})
 
-	println(m.Markup())
+	if markup, err := m.Markup(); err != nil {
+		panic(err)
+	} else {
+		println(markup)
+	}
+
+	e := errors.ErrMarkupFailed{
+		Tag: "body",
+		Reason: errors.ErrMarkupFailed{
+			Tag: "h1",
+			Id:  "header",
+			Reason: &errors.ErrMarkupFailed{
+				Tag:    "span",
+				Reason: fmt.Errorf("hola"),
+			},
+		},
+	}
+
+	println(e.Error())
+
 	return
 
 	// Track lifetime of the parts of the application.

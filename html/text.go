@@ -4,6 +4,6 @@ import "html"
 
 type Text string
 
-func (t Text) Markup() string {
-	return html.EscapeString(string(t))
+func (t Text) Markup() (string, error) {
+	return html.EscapeString(string(t)), nil
 }

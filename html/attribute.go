@@ -37,9 +37,9 @@ func (a *Attribute) Set(name string, value interface{}) {
 	(*a)[name] = value
 }
 
-func (a *Attribute) Markup() string {
+func (a *Attribute) Markup() (string, error) {
 	if *a == nil {
-		return ""
+		return "", nil
 	}
 
 	markup := strings.Builder{}
@@ -60,5 +60,5 @@ func (a *Attribute) Markup() string {
 		}
 	}
 
-	return markup.String()
+	return markup.String(), nil
 }

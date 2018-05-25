@@ -50,10 +50,10 @@ func (c *Class) find(cls string) int {
 	return -1
 }
 
-func (c *Class) Markup() string {
+func (c *Class) Markup() (string, error) {
 	if *c == nil || len(*c) == 0 {
-		return ""
+		return "", nil
 	}
 
-	return " class=\"" + strings.Join([]string(*c), " ") + "\""
+	return " class=\"" + strings.Join([]string(*c), " ") + "\"", nil
 }

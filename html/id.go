@@ -6,12 +6,12 @@ func (id Id) IsEmpty() bool {
 	return len(id) == 0
 }
 
-func (id Id) Markup() string {
+func (id Id) Markup() (string, error) {
 	if len(id) > 0 {
-		return " id=\"" + string(id) + "\""
+		return " id=\"" + string(id) + "\"", nil
 	}
 
-	return ""
+	return "", nil
 }
 
 func (id Id) String() string {

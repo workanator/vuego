@@ -1,18 +1,24 @@
 package html
 
-import "strings"
+import (
+	"strings"
+)
 
 type Multiple []Markuper
 
-func (m Multiple) Markup() string {
+func (m Multiple) Markup() (string, error) {
 	if len(m) == 0 {
-		return ""
+		return "", nil
 	}
 
 	markup := strings.Builder{}
 	for _, el := range m {
-		markup.WriteString(el.Markup())
+		if s, err := el.Markup(); err != nil {
+			return "", err
+		} else {
+			markup.WriteString(s)
+		}
 	}
 
-	return markup.String()
+	return markup.String(), nil
 }

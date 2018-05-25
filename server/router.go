@@ -96,7 +96,8 @@ func (router *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			},
 		}
 
-		body = strings.Replace(body, "#BODY.BEFORE#", e.Render(nil, html.Rect{}).Markup(), -1)
+		m, _ := e.Render(nil, html.Rect{}).Markup()
+		body = strings.Replace(body, "#BODY.BEFORE#", m, -1)
 		body = strings.Replace(body, "#BODY.AFTER#", "<script>var app = new Vue({el: '#app', data: {message: 'Zdarov, Vue!'}})</script>", -1)
 
 		w.Header().Set("Content-Type", "text/html")
