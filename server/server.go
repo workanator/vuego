@@ -7,7 +7,9 @@ import (
 
 	"fmt"
 
+	"github.com/phogolabs/parcello"
 	"github.com/sirupsen/logrus"
+	"golang.org/x/net/websocket"
 	"gopkg.in/workanator/vuego.v1/app"
 	_ "gopkg.in/workanator/vuego.v1/resource"
 )
@@ -15,8 +17,9 @@ import (
 type Server struct {
 	ListenIP   net.IP
 	ListenPort uint16
-	Router     *Router
+	fs         http.FileSystem
 	log        *logrus.Entry
+	ws         *websocket.Server
 	screens    []app.Screener
 }
 
@@ -35,7 +38,7 @@ func (server Server) Start(screen app.Screener) error {
 	// Start the server
 	listenAddr := fmt.Sprintf("%s:%d", server.ListenIP.String(), server.ListenPort)
 	server.log.WithField("listen_addr", listenAddr).Info("Starting server")
-	err := http.ListenAndServe(listenAddr, server.Router)
+	err := http.ListenAndServe(listenAddr, &server)
 
 	// Ignore server closed error.
 	if err != http.ErrServerClosed {
@@ -56,16 +59,13 @@ func (server *Server) PushScreen(screen app.Screener) Refresher {
 
 // Prepares the server for start.
 func (server *Server) prepare() error {
-	// Use teh default router if no router is provided.
-	if server.Router == nil {
-		server.Router = DefaultRouter()
-		server.Router.appFunc = server.handleApp
-		server.Router.wsFunc = server.handleWsConn
-	}
+	// Initialize private members
+	server.fs = parcello.Root("/")
+	server.log = logrus.NewEntry(logrus.StandardLogger())
 
-	// Use the standard logger if no logger is provided.
-	if server.log == nil {
-		server.log = logrus.NewEntry(logrus.StandardLogger())
+	// Initialize WebSocket server.
+	server.ws = &websocket.Server{
+		Handler: server.handleWsConn,
 	}
 
 	// Initialize screen stack.
