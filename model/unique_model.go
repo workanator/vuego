@@ -38,9 +38,9 @@ func (m *UniqueModel) Markup() (string, error) {
 	} else {
 		if len(m.Id) > 0 {
 			id, _ := json.Marshal("#" + m.Id)
-			return "<script>new Vue({el:" + string(id) + ",data:function(){return " + string(data) + "}})</script>", nil
+			return "new Vue({el:" + string(id) + ",data:function(){return " + string(data) + "}})", nil
 		} else {
-			return "<script>new Vue({data:function(){return " + string(data) + "}})</script>", nil
+			return "new Vue({data:function(){return " + string(data) + "}})", nil
 		}
 	}
 }

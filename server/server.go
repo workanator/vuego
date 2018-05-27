@@ -49,7 +49,6 @@ func (server Server) Start(screen app.Screener) error {
 func (server *Server) PushScreen(screen app.Screener) Refresher {
 	if screen != nil {
 		server.screens = append(server.screens, screen)
-		server.Router.Screen = screen
 	}
 
 	return nil
@@ -60,6 +59,8 @@ func (server *Server) prepare() error {
 	// Use teh default router if no router is provided.
 	if server.Router == nil {
 		server.Router = DefaultRouter()
+		server.Router.appFunc = server.handleApp
+		server.Router.wsFunc = server.handleWsConn
 	}
 
 	// Use the standard logger if no logger is provided.

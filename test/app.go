@@ -42,10 +42,15 @@ func (a *App) Body() html.Renderer {
 
 // Get models used on the screen.
 func (a *App) Models() []app.ModelMarkuper {
-	m := &model.SharedModel{
+	m1 := &model.SharedModel{
 		Id: "app",
 	}
-	m.Field("message").Initial("Hello from test application!")
+	m1.Field("message").Initial("Hello from test application!")
 
-	return []app.ModelMarkuper{m}
+	m2 := &model.SharedModel{
+		Id: "state",
+	}
+	m2.Field("processed").Initial(false)
+
+	return []app.ModelMarkuper{m1, m2}
 }

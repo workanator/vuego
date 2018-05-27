@@ -12,5 +12,27 @@
 <body>
     #BODY#
     #MODEL#
+    <script>
+        let ws = new WebSocket('ws://' + window.location.host + '/ws');
+        ws.addEventListener("message", function (ev) {
+            console.info('Message');
+            for (let k in Model) {
+                if (Model[k].hasOwnProperty("message")) {
+                    Model[k].message = ev.data;
+                }
+            }
+        });
+        ws.addEventListener("open", function (ev) {
+            console.info('Connected');
+            ws.send("Can we talk?");
+        });
+        ws.addEventListener("close", function (ev) {
+            console.info('Closed');
+        });
+        ws.addEventListener("error", function (ev) {
+            console.info("Error");
+            console.info(ev)
+        });
+    </script>
 </body>
 </html>

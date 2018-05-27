@@ -38,9 +38,9 @@ func (m *SharedModel) Markup() (string, error) {
 	} else {
 		if len(m.Id) > 0 {
 			id, _ := json.Marshal("#" + m.Id)
-			return "<script>new Vue({el:" + string(id) + ",data:" + string(data) + "})</script>", nil
+			return "new Vue({el:" + string(id) + ",data:" + string(data) + "})", nil
 		} else {
-			return "<script>new Vue({data:" + string(data) + "})</script>", nil
+			return "new Vue({data:" + string(data) + "})", nil
 		}
 	}
 }
