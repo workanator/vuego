@@ -65,7 +65,7 @@ func (server *Server) prepare() error {
 
 	// Initialize WebSocket server.
 	server.ws = &websocket.Server{
-		Handler: server.handleWsConn,
+		Handler: server.routeWs,
 	}
 
 	// Initialize screen stack.
