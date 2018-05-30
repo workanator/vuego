@@ -16,5 +16,5 @@ type Screener interface {
 	Body() html.Renderer
 
 	// Get models used on the screen.
-	Models() []ModelMarkuper
+	Models() []html.Markuper
 }

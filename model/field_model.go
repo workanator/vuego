@@ -1,20 +1,20 @@
 package model
 
 type FieldModel struct {
-	Owner PathModeler
-	Path  []string
+	Container GetSeter
+	Name      string
 }
 
 func (m *FieldModel) Model() interface{} {
-	if m.Owner == nil {
-		return nil
+	if m.Container != nil {
+		return m.Container.Get(m.Name)
 	}
 
-	return m.Owner.PathModel(m.Path)
+	return nil
 }
 
 func (m *FieldModel) SetModel(value interface{}) {
-	if m.Owner != nil {
-		m.Owner.SetPathModel(m.Path, value)
+	if m.Container != nil {
+		m.Container.Set(m.Name, value)
 	}
 }

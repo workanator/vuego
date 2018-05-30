@@ -1,11 +1,11 @@
 package test
 
 import (
-	"gopkg.in/workanator/vuego.v1/app"
 	"gopkg.in/workanator/vuego.v1/html"
 	"gopkg.in/workanator/vuego.v1/model"
 	"gopkg.in/workanator/vuego.v1/theme/vuetify"
 	"gopkg.in/workanator/vuego.v1/ui"
+	"gopkg.in/workanator/vuego.v1/vue"
 )
 
 type App struct{}
@@ -41,16 +41,15 @@ func (a *App) Body() html.Renderer {
 }
 
 // Get models used on the screen.
-func (a *App) Models() []app.ModelMarkuper {
-	m1 := &model.SharedModel{
-		Id: "app",
-	}
+func (a *App) Models() []html.Markuper {
+	m1 := &model.SharedData{}
 	m1.Field("message").Initial("Hello from test application!")
 
-	m2 := &model.SharedModel{
-		Id: "state",
-	}
+	m2 := &model.UniqueData{}
 	m2.Field("processed").Initial(false)
 
-	return []app.ModelMarkuper{m1, m2}
+	return []html.Markuper{
+		&vue.Vue{Id: "app", Data: m1},
+		&vue.Vue{Id: "state", Data: m2},
+	}
 }
