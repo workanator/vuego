@@ -2,8 +2,6 @@ package html
 
 import (
 	"strings"
-
-	"gopkg.in/workanator/vuego.v1/errors"
 )
 
 type Element struct {
@@ -22,7 +20,7 @@ func (el *Element) Markup() (string, error) {
 	if el.Inner != nil {
 		var err error
 		if inner, err = el.Inner.Markup(); err != nil {
-			return "", errors.ErrMarkupFailed{
+			return "", ErrMarkupFailed{
 				Tag:    el.Tag,
 				Id:     el.Id.String(),
 				Reason: err,
@@ -42,7 +40,7 @@ func (el *Element) Markup() (string, error) {
 
 	// Render markup for id attribute
 	if id, err := el.Id.Markup(); err != nil {
-		return "", errors.ErrMarkupFailed{
+		return "", ErrMarkupFailed{
 			Tag:    el.Tag,
 			Id:     el.Id.String(),
 			Reason: err,
@@ -53,7 +51,7 @@ func (el *Element) Markup() (string, error) {
 
 	// Render markup for class attribute
 	if class, err := el.Class.Markup(); err != nil {
-		return "", errors.ErrMarkupFailed{
+		return "", ErrMarkupFailed{
 			Tag:    el.Tag,
 			Id:     el.Id.String(),
 			Reason: err,
@@ -64,7 +62,7 @@ func (el *Element) Markup() (string, error) {
 
 	// Render markup for style attribute
 	if style, err := el.Style.Markup(); err != nil {
-		return "", errors.ErrMarkupFailed{
+		return "", ErrMarkupFailed{
 			Tag:    el.Tag,
 			Id:     el.Id.String(),
 			Reason: err,
@@ -75,7 +73,7 @@ func (el *Element) Markup() (string, error) {
 
 	// Render markup for other attributes
 	if attrs, err := el.Attribute.Markup(); err != nil {
-		return "", errors.ErrMarkupFailed{
+		return "", ErrMarkupFailed{
 			Tag:    el.Tag,
 			Id:     el.Id.String(),
 			Reason: err,

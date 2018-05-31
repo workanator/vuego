@@ -1,10 +1,10 @@
-package errors
+package event
 
-type ErrBusConnectFailed struct {
+type ErrConnectFailed struct {
 	Reason error
 }
 
-func (e ErrBusConnectFailed) Error() string {
+func (e ErrConnectFailed) Error() string {
 	if e.Reason != nil {
 		return "bus connect failed: " + e.Reason.Error()
 	}

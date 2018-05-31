@@ -1,7 +1,6 @@
 package vuetify
 
 import (
-	"gopkg.in/workanator/vuego.v1/errors"
 	"gopkg.in/workanator/vuego.v1/html"
 	"gopkg.in/workanator/vuego.v1/ui"
 )
@@ -47,7 +46,7 @@ func (app *App) Render(parent *html.Element, viewport html.Rect) (*html.Element,
 	// Add children items
 	if app.Children != nil {
 		if el, err := app.Children.Render(contentEl, viewport); err != nil {
-			return nil, errors.ErrRenderFailed{
+			return nil, html.ErrRenderFailed{
 				Class:  app.Class(),
 				Id:     app.Tag.Id.String(),
 				Reason: err,
@@ -73,7 +72,7 @@ func (app *App) Render(parent *html.Element, viewport html.Rect) (*html.Element,
 
 		if app.Toolbar.Top != nil {
 			if tbEl, err := app.Toolbar.Top.Render(appEl, viewport); err != nil {
-				return nil, errors.ErrRenderFailed{
+				return nil, html.ErrRenderFailed{
 					Class:  app.Class(),
 					Id:     app.Tag.Id.String(),
 					Reason: err,
@@ -88,7 +87,7 @@ func (app *App) Render(parent *html.Element, viewport html.Rect) (*html.Element,
 
 		if app.Toolbar.Bottom != nil {
 			if tbEl, err := app.Toolbar.Bottom.Render(appEl, viewport); err != nil {
-				return nil, errors.ErrRenderFailed{
+				return nil, html.ErrRenderFailed{
 					Class:  app.Class(),
 					Id:     app.Tag.Id.String(),
 					Reason: err,

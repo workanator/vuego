@@ -5,6 +5,7 @@ import (
 	"gopkg.in/workanator/vuego.v1/model"
 	"gopkg.in/workanator/vuego.v1/theme/vuetify"
 	"gopkg.in/workanator/vuego.v1/ui"
+	"gopkg.in/workanator/vuego.v1/ui/layout"
 	"gopkg.in/workanator/vuego.v1/vue"
 )
 
@@ -32,7 +33,7 @@ func (a *App) Body() html.Renderer {
 			Id: "app",
 		},
 		Appearance: vuetify.Dark,
-		Children: ui.VerticalLayout{
+		Children: layout.Vert{
 			&ui.Text{
 				Text: "Application says '{{message}}'",
 			},

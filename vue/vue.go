@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"strings"
 
-	"gopkg.in/workanator/vuego.v1/errors"
+	"gopkg.in/workanator/vuego.v1/html"
 	"gopkg.in/workanator/vuego.v1/model"
 )
 
@@ -60,7 +60,7 @@ func (v *Vue) Markup() (string, error) {
 	if v.Data != nil {
 		if data := v.Data.Model(); data != nil {
 			if json, err := json.Marshal(data); err != nil {
-				return "", errors.ErrMarkupFailed{
+				return "", html.ErrMarkupFailed{
 					Tag:    "Vue",
 					Reason: err,
 				}

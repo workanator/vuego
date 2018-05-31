@@ -1,15 +1,15 @@
-package ui
+package layout
 
 import (
 	"fmt"
 
-	"gopkg.in/workanator/vuego.v1/errors"
 	"gopkg.in/workanator/vuego.v1/html"
+	"gopkg.in/workanator/vuego.v1/ui"
 )
 
-type VerticalLayout []Componenter
+type Vert []ui.Componenter
 
-func (l VerticalLayout) Render(parent *html.Element, viewport html.Rect) (*html.Element, error) {
+func (l Vert) Render(parent *html.Element, viewport html.Rect) (*html.Element, error) {
 	// Return nil if there are no children.
 	if len(l) == 0 {
 		return nil, nil
@@ -19,7 +19,7 @@ func (l VerticalLayout) Render(parent *html.Element, viewport html.Rect) (*html.
 	items := make([]html.Markuper, len(l))
 	for k, item := range l {
 		if el, err := item.Render(parent, viewport); err != nil {
-			return nil, errors.ErrRenderFailed{
+			return nil, html.ErrRenderFailed{
 				Class:  item.Class(),
 				Id:     fmt.Sprintf("vertical_layout_item_%d", k),
 				Reason: err,
@@ -35,10 +35,10 @@ func (l VerticalLayout) Render(parent *html.Element, viewport html.Rect) (*html.
 	}, nil
 }
 
-func (l VerticalLayout) Items() []Componenter {
+func (l Vert) Items() []ui.Componenter {
 	return l
 }
 
-func (l VerticalLayout) Len() int {
+func (l Vert) Len() int {
 	return len(l)
 }

@@ -1,10 +1,10 @@
-package errors
+package event
 
-type ErrBusConsumeFailed struct {
+type ErrConsumeFailed struct {
 	Reason error
 }
 
-func (e ErrBusConsumeFailed) Error() string {
+func (e ErrConsumeFailed) Error() string {
 	if e.Reason != nil {
 		return "bus consume failed: " + e.Reason.Error()
 	}

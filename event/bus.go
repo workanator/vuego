@@ -3,8 +3,6 @@ package event
 import (
 	"fmt"
 	"sync"
-
-	"gopkg.in/workanator/vuego.v1/errors"
 )
 
 const (
@@ -30,13 +28,13 @@ func NewBus() *Bus {
 func (b *Bus) Connect(emitter Emitter, consumer Consumer) error {
 	// Validate emitter and consumer
 	if emitter == nil {
-		return errors.ErrBusConnectFailed{
+		return ErrConnectFailed{
 			Reason: fmt.Errorf("emitter is nil"),
 		}
 	}
 
 	if consumer == nil {
-		return errors.ErrBusConnectFailed{
+		return ErrConnectFailed{
 			Reason: fmt.Errorf("consumer is nil"),
 		}
 	}
@@ -49,7 +47,7 @@ func (b *Bus) Connect(emitter Emitter, consumer Consumer) error {
 		// Ask the emitter for new events
 		n, err := emitter.Emit(&buf)
 		if err != nil {
-			return errors.ErrBusEmitFailed{
+			return ErrEmitFailed{
 				Reason: err,
 			}
 		}
@@ -71,7 +69,7 @@ func (b *Bus) Connect(emitter Emitter, consumer Consumer) error {
 			// Push emitted events to consumer
 			for i := 0; i < n; i++ {
 				if err := consumer.Consume(buf[i]); err != nil {
-					return errors.ErrBusConsumeFailed{
+					return ErrConsumeFailed{
 						Reason: err,
 					}
 				}
