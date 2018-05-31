@@ -10,7 +10,8 @@ type dataContainer = map[string]interface{}
 // so it can be used with Screener interface.
 type Container struct {
 	sync.RWMutex
-	data dataContainer
+	data     dataContainer
+	observer Syncer
 }
 
 // Construct FieldModel instance. The type returned is ModelInitialer so the model can be configured and initialized
@@ -80,6 +81,21 @@ func (m *Container) Property(name string) interface{} {
 }
 
 func (m *Container) SetProperty(name string, value interface{}) {
+	m.setProp(name, value)
+	if m.observer != nil {
+		m.observer.Sync(name, value)
+	}
+}
+
+func (m *Container) Sync(name string, value interface{}) {
+	m.setProp(name, value)
+}
+
+func (m *Container) Observe(observer Syncer) {
+	m.observer = observer
+}
+
+func (m *Container) setProp(name string, value interface{}) {
 	m.Lock()
 	defer m.Unlock()
 
