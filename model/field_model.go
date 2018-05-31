@@ -1,20 +1,20 @@
 package model
 
 type FieldModel struct {
-	Container GetSeter
-	Name      string
+	Accessor Propertier
+	Name     string
 }
 
 func (m *FieldModel) Model() interface{} {
-	if m.Container != nil {
-		return m.Container.Get(m.Name)
+	if m.Accessor != nil {
+		return m.Accessor.Property(m.Name)
 	}
 
 	return nil
 }
 
 func (m *FieldModel) SetModel(value interface{}) {
-	if m.Container != nil {
-		m.Container.Set(m.Name, value)
+	if m.Accessor != nil {
+		m.Accessor.SetProperty(m.Name, value)
 	}
 }

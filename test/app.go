@@ -41,14 +41,14 @@ func (a *App) Body() html.Renderer {
 }
 
 // Get models used on the screen.
-func (a *App) Models() []html.Markuper {
-	m1 := &model.SharedData{}
+func (a *App) Models() []model.ModelMarkuper {
+	m1 := &model.Container{}
 	m1.Field("message").Initial("Hello from test application!")
 
-	m2 := &model.UniqueData{}
+	m2 := &model.Container{}
 	m2.Field("processed").Initial(false)
 
-	return []html.Markuper{
+	return []model.ModelMarkuper{
 		&vue.Vue{Id: "app", Data: m1},
 		&vue.Vue{Id: "state", Data: m2},
 	}

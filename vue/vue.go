@@ -5,12 +5,26 @@ import (
 	"strings"
 
 	"gopkg.in/workanator/vuego.v1/errors"
-	"gopkg.in/workanator/vuego.v1/html"
+	"gopkg.in/workanator/vuego.v1/model"
 )
 
 type Vue struct {
 	Id   string
-	Data html.Markuper
+	Data model.ModelMarkuper
+}
+
+func (v *Vue) Model() interface{} {
+	if v.Data != nil {
+		return v.Data.Model()
+	}
+
+	return nil
+}
+
+func (v *Vue) SetModel(value interface{}) {
+	if v.Data != nil {
+		v.Data.SetModel(value)
+	}
 }
 
 func (v *Vue) Markup() (string, error) {
