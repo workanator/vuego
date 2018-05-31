@@ -1,10 +1,7 @@
 package model
 
 import (
-	"encoding/json"
 	"sync"
-
-	"gopkg.in/workanator/vuego.v1/errors"
 )
 
 type dataContainer = map[string]interface{}
@@ -19,6 +16,8 @@ type Container struct {
 // Construct FieldModel instance. The type returned is ModelInitialer so the model can be configured and initialized
 // with value.
 func (m *Container) Field(name string) ModelInitialer {
+	defer m.SetProperty(name, nil)
+
 	return ModelInitial{
 		Modeler: &FieldModel{
 			Accessor: m,
@@ -28,14 +27,14 @@ func (m *Container) Field(name string) ModelInitialer {
 }
 
 func (m *Container) Model() interface{} {
-	m.RLock()
-	defer m.RUnlock()
+	m.Lock()
+	defer m.Unlock()
 
-	if m.data != nil {
-		return m.data
+	if m.data == nil {
+		m.data = make(dataContainer)
 	}
 
-	return dataContainer(nil)
+	return m.data
 }
 
 func (m *Container) SetModel(value interface{}) {
@@ -65,7 +64,7 @@ func (m *Container) SetModel(value interface{}) {
 		}
 	} else {
 		// Erase container data
-		m.data = nil
+		m.data = make(dataContainer)
 	}
 }
 
@@ -89,18 +88,4 @@ func (m *Container) SetProperty(name string, value interface{}) {
 	}
 
 	m.data[name] = value
-}
-
-func (m *Container) Markup() (string, error) {
-	m.RLock()
-	defer m.RUnlock()
-
-	if data, err := json.Marshal(m.data); err != nil {
-		return "", errors.ErrMarkupFailed{
-			Tag:    "model",
-			Reason: err,
-		}
-	} else {
-		return string(data), nil
-	}
 }

@@ -10,7 +10,7 @@ import (
 
 type Vue struct {
 	Id   string
-	Data model.ModelMarkuper
+	Data model.ModelPropertier
 }
 
 func (v *Vue) Model() interface{} {
@@ -24,6 +24,20 @@ func (v *Vue) Model() interface{} {
 func (v *Vue) SetModel(value interface{}) {
 	if v.Data != nil {
 		v.Data.SetModel(value)
+	}
+}
+
+func (v *Vue) Property(name string) interface{} {
+	if v.Data != nil {
+		return v.Data.Property(name)
+	}
+
+	return nil
+}
+
+func (v *Vue) SetProperty(name string, value interface{}) {
+	if v.Data != nil {
+		v.Data.SetProperty(name, value)
 	}
 }
 
@@ -44,14 +58,16 @@ func (v *Vue) Markup() (string, error) {
 
 	// Add data property
 	if v.Data != nil {
-		if markup, err := v.Data.Markup(); err != nil {
-			return "", errors.ErrMarkupFailed{
-				Tag:    "Vue",
-				Reason: err,
+		if data := v.Data.Model(); data != nil {
+			if json, err := json.Marshal(data); err != nil {
+				return "", errors.ErrMarkupFailed{
+					Tag:    "Vue",
+					Reason: err,
+				}
+			} else {
+				sb.WriteString("data:")
+				sb.WriteString(string(json))
 			}
-		} else {
-			sb.WriteString("data:")
-			sb.WriteString(markup)
 		}
 	}
 
