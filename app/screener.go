@@ -2,11 +2,10 @@ package app
 
 import (
 	"gopkg.in/workanator/vuego.v1/html"
-	"gopkg.in/workanator/vuego.v1/model"
 )
 
 type Screener interface {
-	// Get internal screen name.
+	// Get internal screen name. Must be unique and constant.
 	Name() string
 
 	// Get user-friendly title.
@@ -19,5 +18,11 @@ type Screener interface {
 	Body() html.Renderer
 
 	// Get models used on the screen.
-	Models() []model.Modeler
+	Models() []html.Markuper
+
+	// Get screen's event producer.
+	//	EventProducer() event.Producer
+
+	// Get screen's event consumer.
+	//	EventConsumer() event.Consumer
 }

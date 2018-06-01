@@ -1,6 +1,7 @@
 package test
 
 import (
+	"gopkg.in/workanator/vuego.v1/event"
 	"gopkg.in/workanator/vuego.v1/html"
 	"gopkg.in/workanator/vuego.v1/model"
 	"gopkg.in/workanator/vuego.v1/theme/vuetify"
@@ -42,15 +43,25 @@ func (a *App) Body() html.Renderer {
 }
 
 // Get models used on the screen.
-func (a *App) Models() []model.Modeler {
+func (a *App) Models() []html.Markuper {
 	m1 := &model.Container{}
 	m1.Field("message").Initial("Hello from test application!")
 
 	m2 := &model.Container{}
 	m2.Field("processed").Initial(false)
 
-	return []model.Modeler{
+	return []html.Markuper{
 		&vue.Vue{Id: "app", Data: m1},
 		&vue.Vue{Id: "state", Data: m2},
 	}
+}
+
+// Get screen's event producer.
+func (a *App) EventProducer() event.Producer {
+	return nil
+}
+
+// Get screen's event consumer.
+func (a *App) EventConsumer() event.Consumer {
+	return nil
 }

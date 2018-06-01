@@ -12,10 +12,11 @@ import (
 	"gopkg.in/workanator/vuego.v1/html"
 )
 
-func (server *Server) handleApp(w http.ResponseWriter, r *http.Request, tpl []byte) error {
+func (server *Server) handleApp(w http.ResponseWriter, r *http.Request, sess *Session, tpl []byte) error {
+	// Get the top screen
 	var screen app.Screener
-	if len(server.screens) > 0 {
-		screen = server.screens[len(server.screens)-1]
+	if len(sess.Screens) > 0 {
+		screen = sess.Screens[len(sess.Screens)-1]
 	}
 
 	// Render application parts

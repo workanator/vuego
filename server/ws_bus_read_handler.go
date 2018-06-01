@@ -2,22 +2,32 @@ package server
 
 import "golang.org/x/net/websocket"
 
-func (server *Server) wsModelRead(conn *websocket.Conn) {
-	server.log.Info("Accept Model Write connection")
+func (server *Server) wsModelRead(conn *websocket.Conn, sess *Session) {
+	server.log.Info("Accept Bus Write connection")
 
 	// Start an infinite loop for reading model updates on client's side.
 	for {
+		// Test if the connection should be aborted
+		select {
+		case <-sess.Context.Done():
+			break
+		default:
+		}
+
 		// Read the message
 		var message string
 		if err := websocket.Message.Receive(conn, &message); err != nil {
 			server.log.
 				WithError(err).
-				Error("Model read failed")
+				Error("Bus read failed")
 			break
 		}
 
 		server.log.
 			WithField("message", message).
-			Debug("Read model")
+			Debug("Bus read")
 	}
+
+	// Close the connection
+	conn.WriteClose(1000)
 }

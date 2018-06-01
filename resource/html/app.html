@@ -13,7 +13,7 @@
     #BODY#
     #MODEL#
     <script>
-        let ws = new WebSocket('ws://' + window.location.host + '/ws', 'Model.Read');
+        let ws = new WebSocket('ws://' + window.location.host + '/ws', 'Bus.Read');
         ws.addEventListener("message", function (ev) {
             console.info('Message');
             for (let k in Model) {
