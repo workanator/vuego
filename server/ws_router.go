@@ -23,6 +23,8 @@ func (server *Server) routeWs(conn *websocket.Conn) {
 	// Decide how to interact with the client based on the protocol requested.
 	protocol := conn.Config().Protocol
 	if len(protocol) > 0 {
+		server.log.WithField("protocol", protocol[0]).Debug("Bus connection request")
+
 		// Connect client Write and server Read endpoints.
 		if protocol[0] == "Bus.Write" {
 			server.wsModelRead(conn, sess)
@@ -31,7 +33,7 @@ func (server *Server) routeWs(conn *websocket.Conn) {
 
 		// Connect client Read and server Write endpoints.
 		if protocol[0] == "Bus.Read" {
-			server.wsModelWrite(conn, sess)
+			server.wsEventWrite(conn, sess)
 			return
 		}
 	}

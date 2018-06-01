@@ -109,7 +109,7 @@ func (server *Server) identifySession(r *http.Request) (*Session, error) {
 	// Start new session if required
 	var sess *Session
 	if len(server.sessions) == 0 {
-		if s, err := NewSession(user, server.bundle.StartScreen); err != nil {
+		if s, err := server.newSession(user, server.bundle.StartScreen); err != nil {
 			return nil, err
 		} else {
 			sess = s

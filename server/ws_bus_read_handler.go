@@ -2,8 +2,11 @@ package server
 
 import "golang.org/x/net/websocket"
 
+// The function works on protocol Bus.Write which is one way delivery protocol where events
+// are written by client to server.
+// Client -> Server
 func (server *Server) wsModelRead(conn *websocket.Conn, sess *Session) {
-	server.log.Info("Accept Bus Write connection")
+	server.log.Info("Accept Bus.Write connection")
 
 	// Start an infinite loop for reading model updates on client's side.
 	for {
