@@ -2,7 +2,7 @@ package event
 
 import "fmt"
 
-// Queue implements Emitter interface and allows multiple emitters to generate events for single bus.
+// Queue implements Producer interface and allows multiple producers to generate events for single bus.
 // The implementation is thread-safe.
 type Queue struct {
 	queue chan Event
@@ -26,10 +26,12 @@ func (q *Queue) Push(e Event) {
 	}
 }
 
-func (q *Queue) Emit(buf *[]Event) (n int, err error) {
-	// Validate the buffer is not nil
+func (q *Queue) Produce(buf *[]Event) (n int, err error) {
+	// Validate the buffer is not nil and have non-zero length
 	if buf == nil {
 		return 0, fmt.Errorf("buf is nil")
+	} else if len(*buf) == 0 {
+		return 0, fmt.Errorf("buf is zero size")
 	}
 
 	// Read the first event in blocking mode

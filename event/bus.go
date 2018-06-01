@@ -25,11 +25,11 @@ func NewBus() *Bus {
 // Connect starts listening emitter for new events. When events are available they are passed through listeners.
 // At the end all events are passed to the consumer. And then events are discarded.
 // The method blocks the current goroutine.
-func (b *Bus) Connect(emitter Emitter, consumer Consumer) error {
-	// Validate emitter and consumer
-	if emitter == nil {
+func (b *Bus) Connect(producer Producer, consumer Consumer) error {
+	// Validate producer and consumer
+	if producer == nil {
 		return ErrConnectFailed{
-			Reason: fmt.Errorf("emitter is nil"),
+			Reason: fmt.Errorf("producer is nil"),
 		}
 	}
 
@@ -44,8 +44,8 @@ func (b *Bus) Connect(emitter Emitter, consumer Consumer) error {
 
 	// Start and infinite loop of event delivery
 	for {
-		// Ask the emitter for new events
-		n, err := emitter.Emit(&buf)
+		// Ask the producer for new events
+		n, err := producer.Produce(&buf)
 		if err != nil {
 			return ErrEmitFailed{
 				Reason: err,
