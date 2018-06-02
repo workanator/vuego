@@ -8,10 +8,9 @@ import (
 	"os/signal"
 
 	"github.com/sirupsen/logrus"
-	"gopkg.in/workanator/vuego.v1/app"
 	"gopkg.in/workanator/vuego.v1/browser"
 	"gopkg.in/workanator/vuego.v1/server"
-	"gopkg.in/workanator/vuego.v1/test"
+	"gopkg.in/workanator/vuego.v1/test_todo"
 )
 
 func main() {
@@ -36,10 +35,7 @@ func main() {
 		err := server.Server{
 			ListenIP:   net.ParseIP("127.0.0.1"),
 			ListenPort: 8008,
-		}.Start(app.Bundle{
-			SessionIdentifier: nil,
-			StartScreen:       &test.App{},
-		})
+		}.Start(test_todo.Bundle())
 
 		// Send the error.
 		serverErrorChan <- err

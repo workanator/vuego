@@ -18,7 +18,7 @@
             console.info('Message');
             for (let k in Model) {
                 if (Model[k].hasOwnProperty("message")) {
-                    Model[k].message = ev.data;
+                    Model[k].message = JSON.parse(ev.data).data;
                 }
             }
         });
