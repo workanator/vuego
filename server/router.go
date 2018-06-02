@@ -22,15 +22,15 @@ func (server *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		"$U": r.RequestURI,
 	}).Debug("Request")
 
-	// Identify the session
-	sess, err := server.identifySession(r)
+	// Resolve the session
+	sess, err := server.bundle.SessionManager.Resolve(r)
 	if err != nil {
 		if session.IsAccessDenied(err) {
 			server.log.Error("Access Denied")
 			w.WriteHeader(http.StatusForbidden)
 			w.Write([]byte("403 Hey! You shall not pass!"))
 		} else {
-			server.log.WithError(err).Error("Failed to identify session")
+			server.log.WithError(err).Error("Failed to resolve session")
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte("500 " + err.Error()))
 		}
@@ -58,7 +58,6 @@ func (server *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		} else if err := server.handleApp(w, r, sess, tpl); err != nil {
 			server.renderError(w, r, err)
 		}
-
 		return
 
 	case "ws":
@@ -95,39 +94,6 @@ func (server *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("404 Not Found :("))
 }
 
-func (server *Server) identifySession(r *http.Request) (*Session, error) {
-	// Identify the user
-	var user *session.User
-	if server.bundle.SessionIdentifier != nil {
-		if u, err := server.bundle.SessionIdentifier.Identify(r); err != nil {
-			return nil, err
-		} else {
-			user = u
-		}
-	}
-
-	// Start new session if required
-	var sess *Session
-	if len(server.sessions) == 0 {
-		if s, err := server.newSession(user, server.bundle.StartScreen); err != nil {
-			return nil, err
-		} else {
-			sess = s
-		}
-
-		if user != nil {
-			server.log.WithField("user", *user).Debug("Identified user")
-		}
-
-		server.log.Debug("Started new session")
-		server.sessions = append(server.sessions, sess)
-	} else {
-		sess = server.sessions[0] // TODO: replace with session search
-	}
-
-	return sess, nil
-}
-
 func (server *Server) renderError(w http.ResponseWriter, r *http.Request, err error) {
 	// Write the response
 	w.Header().Set("Content-Type", "text/html")
@@ -137,7 +103,7 @@ func (server *Server) renderError(w http.ResponseWriter, r *http.Request, err er
 
 func (server *Server) readFileContent(path string) ([]byte, error) {
 	// Open the application template
-	f, err := server.fs.Open("html/app.html")
+	f, err := server.fs.Open(path)
 	if err != nil {
 		return nil, err
 	}

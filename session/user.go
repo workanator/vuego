@@ -1,5 +1,6 @@
 package session
 
 type User struct {
-	Id string
+	Id   string
+	Data interface{}
 }

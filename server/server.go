@@ -14,22 +14,13 @@ import (
 	_ "gopkg.in/workanator/vuego.v1/resource"
 )
 
-const (
-	BlockingMode     = -1
-	DefaultQueueSize = 0
-	eventQueueSize   = 64
-)
-
 type Server struct {
-	ListenIP          net.IP
-	ListenPort        uint16
-	InboundQueueSize  int
-	OutboundQueueSize int
-	bundle            app.Bundle
-	fs                http.FileSystem
-	log               *logrus.Entry
-	ws                *websocket.Server
-	sessions          []*Session
+	ListenIP   net.IP
+	ListenPort uint16
+	bundle     app.Bundle
+	fs         http.FileSystem
+	log        *logrus.Entry
+	ws         *websocket.Server
 }
 
 // Start prepares the server instance and starts listen for incoming requests. If some fields in the struct omitted
@@ -61,16 +52,6 @@ func (server *Server) prepare() error {
 	// Initialize private members
 	server.fs = parcello.Root("/")
 	server.log = logrus.NewEntry(logrus.StandardLogger())
-	server.sessions = make([]*Session, 0)
-
-	// Set defaults
-	if server.InboundQueueSize == DefaultQueueSize {
-		server.InboundQueueSize = eventQueueSize
-	}
-
-	if server.OutboundQueueSize == DefaultQueueSize {
-		server.OutboundQueueSize = eventQueueSize
-	}
 
 	// Initialize WebSocket server.
 	server.ws = &websocket.Server{

@@ -1,43 +1,42 @@
 package server
 
 import (
+	"crypto/md5"
+	"fmt"
+	binHtml "html"
 	"net/http"
 	"strings"
 
-	"fmt"
-
-	"crypto/md5"
-
-	"gopkg.in/workanator/vuego.v1/app"
 	"gopkg.in/workanator/vuego.v1/html"
+	"gopkg.in/workanator/vuego.v1/session"
 )
 
-func (server *Server) handleApp(w http.ResponseWriter, r *http.Request, sess *Session, tpl []byte) error {
-	// Get the top screen
-	var screen app.Screener
-	if len(sess.Screens) > 0 {
-		screen = sess.Screens[len(sess.Screens)-1]
+func (server *Server) handleApp(w http.ResponseWriter, r *http.Request, sess *session.Session, tpl []byte) error {
+	// Get the screen
+	screen, err := server.bundle.RepresentationManager.Representation(sess)
+	if err != nil {
+		return err
 	}
 
 	// Render application parts
 	var (
-		name       string
-		title      string
 		headHtml   string
 		bodyHtml   string
 		modelsHtml string
 	)
 
 	if screen != nil {
-		// Get name and title
-		name = screen.Name()
-		title = screen.Title()
-
 		// Render headers form the screen and add a meta tag with screen name
-		headHtml = `<meta name="vuego:screen:name" content="` + name + `"/>`
+		if len(screen.Id) > 0 {
+			headHtml += `<meta name="vuego:screen:id" content="` + binHtml.EscapeString(screen.Id) + `"/>`
+		}
 
-		if headEl := screen.Head(); headEl != nil {
-			if markup, err := headEl.Markup(); err != nil {
+		if len(screen.Name) > 0 {
+			headHtml = `<meta name="vuego:screen:name" content="` + binHtml.EscapeString(screen.Name) + `"/>`
+		}
+
+		if screen.Head != nil {
+			if markup, err := screen.Head.Markup(); err != nil {
 				return err
 			} else {
 				headHtml += "\n" + markup
@@ -45,8 +44,8 @@ func (server *Server) handleApp(w http.ResponseWriter, r *http.Request, sess *Se
 		}
 
 		// Render body
-		if bodyCmp := screen.Body(); bodyCmp != nil {
-			if bodyEl, err := bodyCmp.Render(nil, html.Rect{}); err != nil {
+		if screen.Body != nil {
+			if bodyEl, err := screen.Body.Render(nil, html.Rect{}); err != nil {
 				return err
 			} else if bodyEl != nil {
 				if markup, err := bodyEl.Markup(); err != nil {
@@ -59,15 +58,14 @@ func (server *Server) handleApp(w http.ResponseWriter, r *http.Request, sess *Se
 
 		// Render models in a script tag. Each model is put in a map and has a unique identifier
 		// made from the screen name and the position of the model in the slice.
-		models := screen.Models()
-		if len(models) > 0 {
+		if len(screen.Models) > 0 {
 			modelsHtml = "<script>let Model = {};"
 
-			for i, m := range models {
+			for i, m := range screen.Models {
 				if markup, err := m.Markup(); err != nil {
 					return err
 				} else {
-					key := fmt.Sprintf("%s.%04d", name, i)
+					key := fmt.Sprintf("%s.%04d", screen.Name, i)
 					encodedKey := fmt.Sprintf("%x", md5.Sum([]byte(key)))
 
 					modelsHtml += "\n"
@@ -81,7 +79,7 @@ func (server *Server) handleApp(w http.ResponseWriter, r *http.Request, sess *Se
 
 	// Process the template
 	body := string(tpl)
-	body = strings.Replace(body, "#TITLE#", title, -1)
+	body = strings.Replace(body, "#TITLE#", screen.Title, -1)
 	body = strings.Replace(body, "#HEAD#", headHtml, -1)
 	body = strings.Replace(body, "#BODY#", bodyHtml, -1)
 	body = strings.Replace(body, "#MODEL#", modelsHtml, -1)

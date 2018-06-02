@@ -6,8 +6,8 @@ import (
 )
 
 func (server *Server) routeWs(conn *websocket.Conn) {
-	// Identify the session
-	sess, err := server.identifySession(conn.Request())
+	// Resolve the session
+	sess, err := server.bundle.SessionManager.Resolve(conn.Request())
 	if err != nil {
 		if session.IsAccessDenied(err) {
 			server.log.Error("Access Denied")
