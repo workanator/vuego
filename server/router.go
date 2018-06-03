@@ -7,8 +7,6 @@ import (
 
 	_ "gopkg.in/workanator/vuego.v1/resource"
 
-	"io/ioutil"
-
 	"github.com/sirupsen/logrus"
 	"gopkg.in/workanator/vuego.v1/session"
 )
@@ -68,7 +66,7 @@ func (server *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if len(segments) > 1 {
 			path := strings.Join(segments[1:], "/")
 
-			if f, err := server.fs.Open(path); err != nil {
+			if f, err := server.openFile(path); err != nil {
 				w.WriteHeader(http.StatusNotFound)
 				w.Write([]byte(err.Error()))
 			} else {
@@ -99,20 +97,4 @@ func (server *Server) renderError(w http.ResponseWriter, r *http.Request, err er
 	w.Header().Set("Content-Type", "text/html")
 	w.WriteHeader(http.StatusInternalServerError)
 	w.Write([]byte(err.Error()))
-}
-
-func (server *Server) readFileContent(path string) ([]byte, error) {
-	// Open the application template
-	f, err := server.fs.Open(path)
-	if err != nil {
-		return nil, err
-	}
-
-	// Read the whole content of the template
-	content, err := ioutil.ReadAll(f)
-	if err != nil {
-		return nil, err
-	}
-
-	return content, nil
 }

@@ -10,7 +10,7 @@ type Session struct {
 	Context        context.Context
 	Id             string
 	User           *User
-	State          interface{} // TODO: Maybe model.Modeler?
+	State          interface{}
 	InboundEvents  event.Pusher
 	OutboundEvents event.Puller
 }
