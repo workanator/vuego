@@ -21,6 +21,7 @@ type Bus struct {
 	sync.RWMutex
 	listeners []Listener
 	state     uint32
+	done      chan error
 }
 
 // Construct Bus instance. To make it working the method Connect should be used.
@@ -32,6 +33,13 @@ func NewBus() *Bus {
 	}
 }
 
+// Done returns the channel which block the current goroutine while the bus is connected and delivering
+// events. When the bus is disconnected the channel will be closed what will unblock reading goroutine.
+// In case of internal error it will be pushed in the channel and bus will be disconnected.
+func (b *Bus) Done() <-chan error {
+	return b.done
+}
+
 // Test if the bus is disconnected.
 func (b *Bus) IsDisconnected() bool {
 	return atomic.LoadUint32(&b.state) == BusDisconnected
@@ -39,13 +47,11 @@ func (b *Bus) IsDisconnected() bool {
 
 // Connect starts listening emitter for new events. When events are available they are passed through listeners.
 // At the end all events are passed to the consumer. And then events are discarded.
-func (b *Bus) Connect(producer Producer, consumer Consumer) *FutureError {
+func (b *Bus) Connect(producer Producer, consumer Consumer) error {
 	// Require the bus to be disconnected
 	if !atomic.CompareAndSwapUint32(&b.state, BusDisconnected, BusConnecting) {
-		return &FutureError{
-			err: ErrConnectFailed{
-				Reason: fmt.Errorf("bus connected"),
-			},
+		return ErrConnectFailed{
+			Reason: fmt.Errorf("bus connected"),
 		}
 	}
 
@@ -54,20 +60,19 @@ func (b *Bus) Connect(producer Producer, consumer Consumer) *FutureError {
 
 	// Validate producer and consumer
 	if producer == nil {
-		return &FutureError{
-			err: ErrConnectFailed{
-				Reason: fmt.Errorf("producer is nil"),
-			},
+		return ErrConnectFailed{
+			Reason: fmt.Errorf("producer is nil"),
 		}
 	}
 
 	if consumer == nil {
-		return &FutureError{
-			err: ErrConnectFailed{
-				Reason: fmt.Errorf("consumer is nil"),
-			},
+		return ErrConnectFailed{
+			Reason: fmt.Errorf("consumer is nil"),
 		}
 	}
+
+	// Create Done channel
+	b.done = make(chan error)
 
 	// Make buffer big enough for reading emitted events
 	buf := make([]Event, eventBufSize)
@@ -76,8 +81,10 @@ func (b *Bus) Connect(producer Producer, consumer Consumer) *FutureError {
 	atomic.StoreUint32(&b.state, BusConnected)
 
 	// Start and infinite loop of event delivery
-	future := NewFutureError()
 	go func() {
+		// Close Done channel at the end
+		defer close(b.done)
+
 		for {
 			// Exit the loop if the bus in disconnecting state, i.e. Disconnect was invoked
 			if atomic.LoadUint32(&b.state) == BusDiconnecting {
@@ -87,10 +94,10 @@ func (b *Bus) Connect(producer Producer, consumer Consumer) *FutureError {
 			// Ask the producer for new events
 			n, err := producer.Produce(&buf)
 			if err != nil {
-				future.Complete(ErrEmitFailed{
+				b.done <- ErrEmitFailed{
 					Reason: err,
-				})
-				return
+				}
+				break
 			}
 
 			// Deliver events if any
@@ -110,17 +117,17 @@ func (b *Bus) Connect(producer Producer, consumer Consumer) *FutureError {
 				// Push emitted events to consumer
 				for i := 0; i < n; i++ {
 					if err := consumer.Consume(buf[i]); err != nil {
-						future.Complete(ErrConsumeFailed{
+						b.done <- ErrConsumeFailed{
 							Reason: err,
-						})
-						return
+						}
+						break
 					}
 				}
 			}
 		}
 	}()
 
-	return future
+	return nil
 }
 
 // Disconnect the bus gently.
