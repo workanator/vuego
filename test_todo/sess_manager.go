@@ -1,10 +1,8 @@
 package test_todo
 
 import (
-	"net/http"
-
 	"context"
-
+	"net/http"
 	"time"
 
 	"gopkg.in/workanator/vuego.v1/event"

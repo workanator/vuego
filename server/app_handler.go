@@ -13,7 +13,7 @@ import (
 
 func (server *Server) handleApp(w http.ResponseWriter, r *http.Request, sess *session.Session, tpl []byte) error {
 	// Get the screen
-	screen, err := server.bundle.RepresentationManager.Representation(sess)
+	screen, err := server.bundle.Screens.Representation(sess)
 	if err != nil {
 		return err
 	}

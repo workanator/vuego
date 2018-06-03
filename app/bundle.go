@@ -7,10 +7,10 @@ import (
 )
 
 type Bundle struct {
-	Id                    string
-	Name                  string
-	Version               string
-	Fs                    http.FileSystem
-	SessionManager        session.Resolver
-	RepresentationManager Representationer
+	Id       string
+	Name     string
+	Version  string
+	Fs       http.FileSystem
+	Sessions session.Resolver
+	Screens  Representationer
 }

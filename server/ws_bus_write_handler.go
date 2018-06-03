@@ -20,7 +20,7 @@ func (server *Server) wsEventWrite(conn *websocket.Conn, sess *session.Session) 
 			// Encode event to JSON and send it
 			if payload, err := json.Marshal(ev); err != nil {
 				server.log.WithError(err).Error("Event enconding failed")
-			} else if err = websocket.Message.Send(conn, payload); err != nil {
+			} else if err = websocket.Message.Send(conn, string(payload)); err != nil {
 				server.log.WithError(err).Error("Event delivery failed")
 			} else {
 				server.log.WithField("payload", string(payload)).Debug("Event sent")

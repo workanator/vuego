@@ -14,25 +14,25 @@
     #MODEL#
     <script>
         let ws = new WebSocket('ws://' + window.location.host + '/ws', 'Bus.Read');
-        ws.addEventListener("message", function (ev) {
+        ws.onmessage = function (ev) {
             console.info('Message');
             for (let k in Model) {
                 if (Model[k].hasOwnProperty("message")) {
                     Model[k].message = JSON.parse(ev.data).data;
                 }
             }
-        });
-        ws.addEventListener("open", function (ev) {
+        };
+        ws.onopen = function (ev) {
             console.info('Connected');
             ws.send("Can we talk?");
-        });
-        ws.addEventListener("close", function (ev) {
+        };
+        ws.onclose = function (ev) {
             console.info('Closed');
-        });
-        ws.addEventListener("error", function (ev) {
+        };
+        ws.onerror = function (ev) {
             console.info("Error");
             console.info(ev)
-        });
+        };
     </script>
 </body>
 </html>

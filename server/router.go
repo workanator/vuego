@@ -23,7 +23,7 @@ func (server *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}).Debug("Request")
 
 	// Resolve the session
-	sess, err := server.bundle.SessionManager.Resolve(r)
+	sess, err := server.bundle.Sessions.Resolve(r)
 	if err != nil {
 		if session.IsAccessDenied(err) {
 			server.log.Error("Access Denied")
