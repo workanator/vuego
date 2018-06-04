@@ -50,7 +50,7 @@ func (ss *SingleSession) Resolve(r *http.Request) (*session.Session, error) {
 
 	// Create the new session when it issued for the first time.
 	if ss.sess == nil {
-		// Reused of create a new context
+		// Reused or create a new context
 		if ss.Context == nil {
 			ss.Context = context.Background()
 		}
