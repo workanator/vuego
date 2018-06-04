@@ -14,8 +14,8 @@ import (
 	"gopkg.in/workanator/vuego.v1/session"
 )
 
-// SingleSessions supports only one session (single user). The session uses sync.RWMutex as data races protection and
-// it is recommended to use the mutex embedded when accessing fields of the session.
+// SingleSessions supports only one session (single user approach). The session uses sync.RWMutex as data races
+// protection and it is recommended to use the mutex embedded when accessing fields of the session.
 type SingleSession struct {
 	sync.RWMutex
 
