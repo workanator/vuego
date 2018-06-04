@@ -11,6 +11,6 @@ type Session struct {
 	Id             string
 	User           *User
 	State          interface{}
-	InboundEvents  event.Pusher
-	OutboundEvents event.Puller
+	InboundEvents  event.Pusher // Must be event.Producer
+	OutboundEvents event.Puller // Must be event.Consumer
 }
