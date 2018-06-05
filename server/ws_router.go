@@ -11,10 +11,10 @@ func (server *Server) routeWs(conn *websocket.Conn) {
 	if err != nil {
 		if session.IsAccessDenied(err) {
 			server.log.Error("Access Denied")
-			conn.WriteClose(1008)
+			conn.WriteClose(WsPolicyViolation)
 		} else {
 			server.log.WithError(err).Error("Failed to identify session")
-			conn.WriteClose(1011)
+			conn.WriteClose(WsInternalError)
 		}
 
 		return
@@ -39,5 +39,5 @@ func (server *Server) routeWs(conn *websocket.Conn) {
 	}
 
 	// The protocol is not defined or unsupported
-	conn.WriteClose(1002)
+	conn.WriteClose(WsProtocolError)
 }

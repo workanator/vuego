@@ -10,6 +10,16 @@ import (
 // are written by client to server.
 // Client -> Server
 func (server *Server) wsModelRead(conn *websocket.Conn, sess *session.Session) {
+	// Close the connection if inbound event bus is nil
+	if sess.Inbound == nil {
+		server.log.
+			WithField("error", "inbound bus is nil").
+			Error("Failed  to accept Bus.Write connection")
+		conn.WriteClose(WsInternalError)
+		return
+	}
+
+	// Accept the connection
 	server.log.Info("Accept Bus.Write connection")
 
 	// Start an infinite loop for reading model updates on client's side.
@@ -39,5 +49,5 @@ func (server *Server) wsModelRead(conn *websocket.Conn, sess *session.Session) {
 	}
 
 	// Close the connection
-	conn.WriteClose(1000)
+	conn.WriteClose(WsNormalClosure)
 }
