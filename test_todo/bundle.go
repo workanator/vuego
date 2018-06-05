@@ -8,11 +8,13 @@ import (
 	"context"
 
 	"gopkg.in/workanator/vuego.v1/app"
-	"gopkg.in/workanator/vuego.v1/facade"
-	"gopkg.in/workanator/vuego.v1/session"
+	"gopkg.in/workanator/vuego.v1/app/facade"
+	"gopkg.in/workanator/vuego.v1/app/session"
 )
 
 func Bundle() app.Bundle {
+	reactor := facade.NewReactor()
+
 	return app.Bundle{
 		Id:      "todo",
 		Name:    "Simple To-Do",
@@ -32,8 +34,8 @@ func Bundle() app.Bundle {
 					}, nil
 				}),
 			},
-			Inbound:  nil,
-			Outbound: nil,
+			Inbound:  reactor,
+			Outbound: reactor,
 		},
 		Screens: &reprManager{},
 	}

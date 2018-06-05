@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 
 	"golang.org/x/net/websocket"
-	"gopkg.in/workanator/vuego.v1/event"
-	"gopkg.in/workanator/vuego.v1/session"
+	"gopkg.in/workanator/vuego.v1/app/event"
+	"gopkg.in/workanator/vuego.v1/app/session"
 )
 
 const (
@@ -33,7 +33,7 @@ func (server *Server) wsEventWrite(conn *websocket.Conn, sess *session.Session) 
 		if n, err := sess.Outbound.Produce(buf, sess.Context); err != nil {
 			server.log.
 				WithError(err).
-				Error("Bus event produce failed")
+				Error("Bus.Read event produce failed")
 			return WsTryAgainLater
 		} else if n > 0 {
 			for i := 0; i < n; i++ {
@@ -41,20 +41,20 @@ func (server *Server) wsEventWrite(conn *websocket.Conn, sess *session.Session) 
 				if payload, err := json.Marshal(buf[i]); err != nil {
 					server.log.
 						WithError(err).
-						Error("Event enconding failed")
+						Error("Bus.Read JSON enconde failed")
 				} else if err = websocket.Message.Send(conn, string(payload)); err != nil {
 					server.log.
 						WithError(err).
-						Error("Event delivery failed")
+						Error("Bus.Read event delivery failed")
 				} else {
 					server.log.
 						WithField("payload", string(payload)).
-						Debug("Event sent")
+						Debug("Bus.Read event sent")
 				}
 			}
 		} else {
 			// Sounds like the event bus is disconnected
-			server.log.Debug("No events received")
+			server.log.Debug("Bus.Read no events received")
 			return WsTryAgainLater
 		}
 

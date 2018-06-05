@@ -2,9 +2,9 @@ package test_todo
 
 import (
 	"gopkg.in/workanator/vuego.v1/app"
+	"gopkg.in/workanator/vuego.v1/app/session"
 	"gopkg.in/workanator/vuego.v1/html"
-	"gopkg.in/workanator/vuego.v1/model"
-	"gopkg.in/workanator/vuego.v1/session"
+	"gopkg.in/workanator/vuego.v1/mvc/model"
 	"gopkg.in/workanator/vuego.v1/theme/vuetify"
 	"gopkg.in/workanator/vuego.v1/ui"
 	"gopkg.in/workanator/vuego.v1/ui/layout"

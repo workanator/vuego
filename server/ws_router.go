@@ -2,7 +2,7 @@ package server
 
 import (
 	"golang.org/x/net/websocket"
-	"gopkg.in/workanator/vuego.v1/session"
+	"gopkg.in/workanator/vuego.v1/app/session"
 )
 
 func (server *Server) routeWs(conn *websocket.Conn) {

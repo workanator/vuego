@@ -3,7 +3,7 @@ package session
 import (
 	"context"
 
-	"gopkg.in/workanator/vuego.v1/event"
+	"gopkg.in/workanator/vuego.v1/app/event"
 )
 
 type Session struct {

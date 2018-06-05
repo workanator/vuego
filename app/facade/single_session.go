@@ -10,8 +10,8 @@ import (
 	"sync"
 	"time"
 
-	"gopkg.in/workanator/vuego.v1/event"
-	"gopkg.in/workanator/vuego.v1/session"
+	"gopkg.in/workanator/vuego.v1/app/event"
+	"gopkg.in/workanator/vuego.v1/app/session"
 )
 
 // SingleSessions supports only one session (single user approach). The session uses sync.RWMutex as data races

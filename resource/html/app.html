@@ -13,8 +13,8 @@
     #BODY#
     #MODEL#
     <script>
-        let ws = new WebSocket('ws://' + window.location.host + '/ws', 'Bus.Read');
-        ws.onmessage = function (ev) {
+        let wsRead = new WebSocket('ws://' + window.location.host + '/ws', 'Bus.Read');
+        wsRead.onmessage = function (ev) {
             console.info('Message');
             for (let k in Model) {
                 if (Model[k].hasOwnProperty("message")) {
@@ -22,14 +22,32 @@
                 }
             }
         };
-        ws.onopen = function (ev) {
+        wsRead.onopen = function (ev) {
             console.info('Connected');
-            ws.send("Can we talk?");
+            wsRead.send("Can we talk?");
+            wsRead.send(JSON.stringify({data:"HELLO!?"}));
         };
-        ws.onclose = function (ev) {
+        wsRead.onclose = function (ev) {
             console.info('Closed');
         };
-        ws.onerror = function (ev) {
+        wsRead.onerror = function (ev) {
+            console.info("Error");
+            console.info(ev)
+        };
+
+        let wsWrite = new WebSocket('ws://' + window.location.host + '/ws', 'Bus.Write');
+        wsWrite.onmessage = function (ev) {
+            console.info('Message');
+        };
+        wsWrite.onopen = function (ev) {
+            console.info('Connected');
+            wsWrite.send("Can we talk?");
+            wsWrite.send(JSON.stringify({data:"HELLO!?"}));
+        };
+        wsWrite.onclose = function (ev) {
+            console.info('Closed');
+        };
+        wsWrite.onerror = function (ev) {
             console.info("Error");
             console.info(ev)
         };
