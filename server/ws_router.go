@@ -27,13 +27,13 @@ func (server *Server) routeWs(conn *websocket.Conn) {
 
 		// Connect client Write and server Read endpoints.
 		if protocol[0] == "Bus.Write" {
-			server.wsModelRead(conn, sess)
+			conn.WriteClose(server.wsModelRead(conn, sess))
 			return
 		}
 
 		// Connect client Read and server Write endpoints.
 		if protocol[0] == "Bus.Read" {
-			server.wsEventWrite(conn, sess)
+			conn.WriteClose(server.wsEventWrite(conn, sess))
 			return
 		}
 	}

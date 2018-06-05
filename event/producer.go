@@ -1,5 +1,7 @@
 package event
 
+import "context"
+
 type Producer interface {
-	Produce(buf []Event) (n int, err error)
+	Produce(buf []Event, ctx context.Context) (n int, err error)
 }

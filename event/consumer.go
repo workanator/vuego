@@ -1,5 +1,7 @@
 package event
 
+import "context"
+
 type Consumer interface {
-	Consume(buf []Event) error
+	Consume(buf []Event, ctx context.Context) error
 }

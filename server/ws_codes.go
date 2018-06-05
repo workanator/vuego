@@ -1,5 +1,7 @@
 package server
 
+type WsCloseCode = int
+
 // WebSocket close codes
 const (
 	WsNormalClosure           = 1000

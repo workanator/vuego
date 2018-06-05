@@ -1,18 +1,5 @@
 package event
 
-// Bus connection failed
-type ErrConnectFailed struct {
-	Reason error
-}
-
-func (e ErrConnectFailed) Error() string {
-	if e.Reason != nil {
-		return "bus connect failed: " + e.Reason.Error()
-	}
-
-	return "bus connect failed"
-}
-
 // Bus connected consumer failed to consume events
 type ErrConsumeFailed struct {
 	Reason error

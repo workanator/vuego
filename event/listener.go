@@ -1,5 +1,5 @@
 package event
 
 type Listener interface {
-	Listen(event Event)
+	Listen(buf []Event)
 }

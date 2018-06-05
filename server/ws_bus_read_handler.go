@@ -9,14 +9,13 @@ import (
 // The function works on protocol Bus.Write which is one way delivery protocol where events
 // are written by client to server.
 // Client -> Server
-func (server *Server) wsModelRead(conn *websocket.Conn, sess *session.Session) {
+func (server *Server) wsModelRead(conn *websocket.Conn, sess *session.Session) WsCloseCode {
 	// Close the connection if inbound event bus is nil
 	if sess.Inbound == nil {
 		server.log.
 			WithField("error", "inbound bus is nil").
 			Error("Failed  to accept Bus.Write connection")
-		conn.WriteClose(WsInternalError)
-		return
+		return WsInternalError
 	}
 
 	// Accept the connection
@@ -24,20 +23,15 @@ func (server *Server) wsModelRead(conn *websocket.Conn, sess *session.Session) {
 
 	// Start an infinite loop for reading model updates on client's side.
 	for {
-		// Test if the connection should be aborted
-		select {
-		case <-sess.Context.Done():
-			break
-		default:
-		}
+		var ev event.Event
 
 		// Read the message
-		var ev event.Event
+		// TODO: Make Receive be session context aware. Possible?
 		if err := websocket.Message.Receive(conn, &ev); err != nil {
 			server.log.
 				WithError(err).
 				Error("Bus read failed")
-			break
+			return WsTryAgainLater
 		}
 
 		server.log.
@@ -45,9 +39,22 @@ func (server *Server) wsModelRead(conn *websocket.Conn, sess *session.Session) {
 			Debug("Bus read")
 
 		// Push the event to the event bus
-		sess.Inbound.Consume([]event.Event{ev})
+		if err := sess.Inbound.Consume([]event.Event{ev}, sess.Context); err != nil {
+			server.log.
+				WithError(err).
+				Error("Bus event consume failed")
+			return WsTryAgainLater
+		}
+
+		// Test if the connection should be closed
+		if sess.Context != nil {
+			select {
+			case <-sess.Context.Done():
+				break
+			default:
+			}
+		}
 	}
 
-	// Close the connection
-	conn.WriteClose(WsNormalClosure)
+	return WsNormalClosure
 }
