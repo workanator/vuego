@@ -21,7 +21,7 @@ func Bundle() app.Bundle {
 		Id:      "todo",
 		Name:    "Simple To-Do",
 		Version: "1.0",
-		Fs:      &facade.FileSystem{},
+		Fs:      &facade.MultiFS{},
 		Sessions: &facade.MultiSession{
 			Who: session.IdentifyFunc(func(r *http.Request) (string, error) {
 				return (strings.Split(r.RemoteAddr, ":"))[0], nil
@@ -36,8 +36,8 @@ func Bundle() app.Bundle {
 					}, nil
 				}),
 			},
-			InboundEvents:  &pushQue,
-			OutboundEvents: &pullQue,
+			Inbound:  &pushQue,
+			Outbound: &pullQue,
 		},
 		Screens: &reprManager{},
 	}

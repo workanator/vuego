@@ -32,12 +32,15 @@ func (q *PullQueue) Pull() (*Event, error) {
 	return nil, nil
 }
 
-func (q *PullQueue) Consume(e Event) (err error) {
+func (q *PullQueue) Consume(buf []Event) (err error) {
 	// Validate the channel is created
 	if q == nil {
 		return nil
 	}
 
-	*q <- &e
+	for _, e := range buf {
+		*q <- &e
+	}
+
 	return nil
 }

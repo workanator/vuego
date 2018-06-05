@@ -34,10 +34,10 @@ type SingleSession struct {
 	State interface{}
 
 	// Events producer. Inbound events go from client to server.
-	InboundEvents event.Pusher
+	Inbound event.Consumer
 
 	// Events consumer. Outbound events go from server to client.
-	OutboundEvents event.Puller
+	Outbound event.Producer
 
 	sess *session.Session
 }
@@ -63,12 +63,12 @@ func (ss *SingleSession) Resolve(r *http.Request) (*session.Session, error) {
 
 		// Create the session
 		ss.sess = &session.Session{
-			Context:        ss.Context,
-			Id:             ss.Id,
-			User:           ss.User,
-			State:          ss.State,
-			InboundEvents:  ss.InboundEvents,
-			OutboundEvents: ss.OutboundEvents,
+			Context:  ss.Context,
+			Id:       ss.Id,
+			User:     ss.User,
+			State:    ss.State,
+			Inbound:  ss.Inbound,
+			Outbound: ss.Outbound,
 		}
 	}
 

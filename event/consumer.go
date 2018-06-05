@@ -1,5 +1,5 @@
 package event
 
 type Consumer interface {
-	Consume(event Event) error
+	Consume(buf []Event) error
 }

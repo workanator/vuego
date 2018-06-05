@@ -7,10 +7,10 @@ import (
 )
 
 type Session struct {
-	Context        context.Context
-	Id             string
-	User           *User
-	State          interface{}
-	InboundEvents  event.Pusher // Must be event.Producer
-	OutboundEvents event.Puller // Must be event.Consumer
+	Context  context.Context
+	Id       string
+	User     *User
+	State    interface{}
+	Inbound  event.Consumer
+	Outbound event.Producer
 }

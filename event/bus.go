@@ -92,9 +92,9 @@ func (b *Bus) Connect(producer Producer, consumer Consumer) error {
 			}
 
 			// Ask the producer for new events
-			n, err := producer.Produce(&buf)
+			n, err := producer.Produce(buf)
 			if err != nil {
-				b.done <- ErrEmitFailed{
+				b.done <- ErrProduceFailed{
 					Reason: err,
 				}
 				break
@@ -102,7 +102,7 @@ func (b *Bus) Connect(producer Producer, consumer Consumer) error {
 
 			// Deliver events if any
 			if n > 0 {
-				// Run emitted events through listeners
+				// Run events through listeners
 				func() {
 					b.RLock()
 					defer b.RUnlock()
@@ -115,13 +115,11 @@ func (b *Bus) Connect(producer Producer, consumer Consumer) error {
 				}()
 
 				// Push emitted events to consumer
-				for i := 0; i < n; i++ {
-					if err := consumer.Consume(buf[i]); err != nil {
-						b.done <- ErrConsumeFailed{
-							Reason: err,
-						}
-						break
+				if err := consumer.Consume(buf[0 : n-1]); err != nil {
+					b.done <- ErrConsumeFailed{
+						Reason: err,
 					}
+					break
 				}
 			}
 		}

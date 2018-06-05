@@ -35,7 +35,7 @@ func (server *Server) wsModelRead(conn *websocket.Conn, sess *session.Session) {
 			Debug("Bus read")
 
 		// Push the event to the event bus
-		sess.InboundEvents.Push(&ev)
+		sess.Inbound.Consume([]event.Event{ev})
 	}
 
 	// Close the connection
