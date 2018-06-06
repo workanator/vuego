@@ -34,8 +34,7 @@ func Bundle() app.Bundle {
 					}, nil
 				}),
 			},
-			Inbound:  reactor,
-			Outbound: reactor,
+			EventBus: reactor,
 		},
 		Screens: &reprManager{},
 	}

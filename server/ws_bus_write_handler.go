@@ -16,10 +16,10 @@ const (
 // are written by server to client.
 // Server -> Client
 func (server *Server) wsEventWrite(conn *websocket.Conn, sess *session.Session) WsCloseCode {
-	// Close the connection if outbound event bus is nil
-	if sess.Outbound == nil {
+	// Close the connection if event bus is nil
+	if sess.EventBus == nil {
 		server.log.
-			WithField("error", "outbound bus is nil").
+			WithField("error", "event bus is nil").
 			Error("Failed to accept Bus.Read connection")
 		return WsInternalError
 	}
@@ -30,7 +30,7 @@ func (server *Server) wsEventWrite(conn *websocket.Conn, sess *session.Session) 
 	// Start an infinite loop for writing model updates on server's side.
 	buf := make([]event.Event, eventBufSize)
 	for {
-		if n, err := sess.Outbound.Produce(buf, sess.Context); err != nil {
+		if n, err := sess.EventBus.Produce(buf, sess.Context); err != nil {
 			server.log.
 				WithError(err).
 				Error("Bus.Read event produce failed")

@@ -18,11 +18,8 @@ type MultiSession struct {
 	// Session store implementation.
 	Store session.Store
 
-	// Events producer. Inbound events go from client to server.
-	Inbound event.Consumer
-
-	// Events consumer. Outbound events go from server to client.
-	Outbound event.Producer
+	// Session event bus.
+	EventBus event.Bus
 }
 
 // Implement session.Resolver interface.
@@ -49,12 +46,8 @@ func (ms *MultiSession) Resolve(r *http.Request) (sess *session.Session, err err
 			sess.Context = context.Background()
 		}
 
-		if sess.Inbound == nil {
-			sess.Inbound = ms.Inbound
-		}
-
-		if sess.Outbound == nil {
-			sess.Outbound = ms.Outbound
+		if sess.EventBus == nil {
+			sess.EventBus = ms.EventBus
 		}
 	}
 

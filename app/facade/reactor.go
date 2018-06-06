@@ -12,6 +12,7 @@ const (
 	eventQueueSize = 64
 )
 
+// Reactor implements event.Bus interface and establishes event processing.
 type Reactor struct {
 	outEvents chan event.Event
 }

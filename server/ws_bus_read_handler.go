@@ -12,11 +12,11 @@ import (
 // are written by client to server.
 // Client -> Server
 func (server *Server) wsModelRead(conn *websocket.Conn, sess *session.Session) WsCloseCode {
-	// Close the connection if inbound event bus is nil
-	if sess.Inbound == nil {
+	// Close the connection if event bus is nil
+	if sess.EventBus == nil {
 		server.log.
-			WithField("error", "inbound bus is nil").
-			Error("Failed  to accept Bus.Write connection")
+			WithField("error", "event bus is nil").
+			Error("Failed to accept Bus.Write connection")
 		return WsInternalError
 	}
 
@@ -49,7 +49,7 @@ func (server *Server) wsModelRead(conn *websocket.Conn, sess *session.Session) W
 		}
 
 		// Push the event to the event bus
-		if err := sess.Inbound.Consume([]event.Event{ev}, sess.Context); err != nil {
+		if err := sess.EventBus.Consume([]event.Event{ev}, sess.Context); err != nil {
 			server.log.
 				WithError(err).
 				Error("Bus.Write event consume failed")

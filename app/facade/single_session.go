@@ -33,11 +33,8 @@ type SingleSession struct {
 	// The state instance the session contains.
 	State interface{}
 
-	// Events producer. Inbound events go from client to server.
-	Inbound event.Consumer
-
-	// Events consumer. Outbound events go from server to client.
-	Outbound event.Producer
+	// Session event bus.
+	EventBus event.Bus
 
 	sess *session.Session
 }
@@ -67,8 +64,7 @@ func (ss *SingleSession) Resolve(r *http.Request) (*session.Session, error) {
 			Id:       ss.Id,
 			User:     ss.User,
 			State:    ss.State,
-			Inbound:  ss.Inbound,
-			Outbound: ss.Outbound,
+			EventBus: ss.EventBus,
 		}
 	}
 

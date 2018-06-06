@@ -7,10 +7,10 @@ type ErrConsumeFailed struct {
 
 func (e ErrConsumeFailed) Error() string {
 	if e.Reason != nil {
-		return "bus consume failed: " + e.Reason.Error()
+		return "consume failed: " + e.Reason.Error()
 	}
 
-	return "bus consume failed"
+	return "consume failed"
 }
 
 // Bus connected provider failed to provide events
@@ -20,8 +20,8 @@ type ErrProduceFailed struct {
 
 func (e ErrProduceFailed) Error() string {
 	if e.Reason != nil {
-		return "bus produce failed: " + e.Reason.Error()
+		return "produce failed: " + e.Reason.Error()
 	}
 
-	return "bus produce failed"
+	return "produce failed"
 }

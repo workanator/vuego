@@ -10,7 +10,7 @@ type Event struct {
 	Data     interface{}   `json:"data,omitempty"`
 }
 
-// Event sources
+// EventBus sources
 const (
 	SourceServer EventSource = "server"
 	SourceClient EventSource = "client"
@@ -33,7 +33,7 @@ func (es EventSource) IsCustom() bool {
 	return es != SourceServer && es != SourceClient
 }
 
-// Event categories
+// EventBus categories
 const (
 	CategorySystem EventCategory = "system"
 	CategoryModel  EventCategory = "model"

@@ -11,6 +11,5 @@ type Session struct {
 	Id       string
 	User     *User
 	State    interface{}
-	Inbound  event.Consumer
-	Outbound event.Producer
+	EventBus event.Bus
 }
