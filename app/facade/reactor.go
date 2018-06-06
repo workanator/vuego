@@ -3,8 +3,6 @@ package facade
 import (
 	"context"
 
-	"fmt"
-
 	"gopkg.in/workanator/vuego.v1/app/event"
 )
 
@@ -27,8 +25,10 @@ func NewReactor() *Reactor {
 func (r *Reactor) Consume(buf []event.Event, ctx context.Context) error {
 	// Marshal events
 	for _, ev := range buf {
-		// Marshal somewhere
-		println("MARSHAL", fmt.Sprint(ev))
+		// Deliver system events directly to outbound queue
+		if ev.Category.IsSystem() {
+			r.outEvents <- ev
+		}
 
 		// Test if context is terminated
 		if ctx != nil {
@@ -64,7 +64,8 @@ func (r *Reactor) Produce(buf []event.Event, ctx context.Context) (n int, err er
 	}
 
 	// Read as much events as possible from the queue
-	for n < len(buf) {
+	hasMore := true
+	for n < len(buf) && hasMore {
 		if ctx != nil {
 			select {
 			case buf[n] = <-r.outEvents:
@@ -72,14 +73,14 @@ func (r *Reactor) Produce(buf []event.Event, ctx context.Context) (n int, err er
 			case <-ctx.Done():
 				return n, ctx.Err()
 			default:
-				break
+				hasMore = false
 			}
 		} else {
 			select {
 			case buf[n] = <-r.outEvents:
 				n++
 			default:
-				break
+				hasMore = false
 			}
 		}
 	}

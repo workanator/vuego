@@ -3,37 +3,18 @@ package event
 import "time"
 
 type Event struct {
-	Source   EventSource   `json:"-"`
+	Target   string        `json:"target"`
 	Category EventCategory `json:"category"`
 	Name     string        `json:"name"`
 	Time     time.Time     `json:"time"`
 	Data     interface{}   `json:"data,omitempty"`
 }
 
-// EventBus sources
-const (
-	SourceServer EventSource = "server"
-	SourceClient EventSource = "client"
-)
-
-type EventSource string
-
-// Test if the event source is server
-func (es EventSource) IsServer() bool {
-	return es == SourceServer
+func (e *Event) Conforms(target, name string) bool {
+	return e.Target == target && e.Name == name
 }
 
-// Test if the event source is client
-func (es EventSource) IsClient() bool {
-	return es == SourceClient
-}
-
-// Test if the event source is custom
-func (es EventSource) IsCustom() bool {
-	return es != SourceServer && es != SourceClient
-}
-
-// EventBus categories
+// Event categories
 const (
 	CategorySystem EventCategory = "system"
 	CategoryModel  EventCategory = "model"

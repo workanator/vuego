@@ -37,6 +37,16 @@ func (server *Server) wsEventWrite(conn *websocket.Conn, sess *session.Session) 
 			return WsTryAgainLater
 		} else if n > 0 {
 			for i := 0; i < n; i++ {
+				// React on system events and drop them
+				if buf[i].Category.IsSystem() {
+					if buf[i].Conforms(targetBus, nameWsClosed) {
+						server.log.Error("Bus.Read client closed websocket")
+						return WsGoingAway
+					}
+
+					continue
+				}
+
 				// Encode event to JSON and send it
 				if payload, err := json.Marshal(buf[i]); err != nil {
 					server.log.

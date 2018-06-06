@@ -3,6 +3,8 @@ package server
 import (
 	"encoding/json"
 
+	"io"
+
 	"golang.org/x/net/websocket"
 	"gopkg.in/workanator/vuego.v1/app/event"
 	"gopkg.in/workanator/vuego.v1/app/session"
@@ -29,10 +31,16 @@ func (server *Server) wsModelRead(conn *websocket.Conn, sess *session.Session) W
 		// TODO: Make Receive be session context aware. Possible?
 		var msg string
 		if err := websocket.Message.Receive(conn, &msg); err != nil {
-			server.log.
-				WithError(err).
-				Error("Bus.Write read failed")
-			return WsTryAgainLater
+			if err == io.EOF {
+				server.log.Error("Bus.Write client closed websocket")
+				_ = sess.EventBus.Consume([]event.Event{evClientClosedWebSocket}, sess.Context)
+				return WsGoingAway
+			} else {
+				server.log.
+					WithError(err).
+					Error("Bus.Write read failed")
+				return WsTryAgainLater
+			}
 		}
 
 		server.log.
