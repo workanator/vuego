@@ -40,6 +40,6 @@ func Bundle() app.Bundle {
 			},
 			EventBus: reactor,
 		},
-		Screens: &reprManager{},
+		Routes: &router{},
 	}
 }

@@ -11,9 +11,9 @@ import (
 	"gopkg.in/workanator/vuego.v1/vue"
 )
 
-type reprManager struct{}
+type router struct{}
 
-func (reprManager) Representation(sess *session.Session) (scr *view.Screen, err error) {
+func (router) Route(sess *session.Session, route string) (scr *view.Screen, err error) {
 	body := &vuetify.App{
 		Tag: ui.Tag{
 			Id: "app",

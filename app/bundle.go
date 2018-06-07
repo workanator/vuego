@@ -3,8 +3,8 @@ package app
 import (
 	"net/http"
 
+	"gopkg.in/workanator/vuego.v1/app/route"
 	"gopkg.in/workanator/vuego.v1/app/session"
-	"gopkg.in/workanator/vuego.v1/mvc/view"
 )
 
 type Bundle struct {
@@ -14,5 +14,5 @@ type Bundle struct {
 	Lifecycle Lifecycle
 	Fs        http.FileSystem
 	Sessions  session.Resolver
-	Screens   view.Representationer
+	Routes    route.Router
 }
