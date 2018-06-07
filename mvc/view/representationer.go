@@ -1,6 +1,8 @@
-package app
+package view
 
-import "gopkg.in/workanator/vuego.v1/app/session"
+import (
+	"gopkg.in/workanator/vuego.v1/app/session"
+)
 
 type Representationer interface {
 	Representation(sess *session.Session) (scr *Screen, err error)

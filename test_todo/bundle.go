@@ -20,6 +20,10 @@ func Bundle() app.Bundle {
 		Name:    "Simple To-Do",
 		Version: "1.0",
 		Fs:      &facade.MultiFS{},
+		Lifecycle: app.LifecycleFunc(func(starting bool, b *app.Bundle) error {
+			println(starting)
+			return nil
+		}),
 		Sessions: &facade.MultiSession{
 			Who: session.IdentifyFunc(func(r *http.Request) (string, error) {
 				return (strings.Split(r.RemoteAddr, ":"))[0], nil

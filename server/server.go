@@ -20,6 +20,7 @@ type Server struct {
 	bundle     app.Bundle
 	fs         http.FileSystem
 	log        *logrus.Entry
+	serv       *http.Server
 	ws         *websocket.Server
 }
 
@@ -34,17 +35,48 @@ func (server Server) Start(bundle app.Bundle) error {
 		return err
 	}
 
-	// Start the server
+	// Create and configure HTTP server instance
 	listenAddr := fmt.Sprintf("%s:%d", server.ListenIP.String(), server.ListenPort)
-	server.log.WithField("listen_addr", listenAddr).Info("Starting server")
-	err := http.ListenAndServe(listenAddr, &server)
+	server.serv = &http.Server{
+		Addr:    listenAddr,
+		Handler: &server,
+	}
 
-	// Ignore server closed error.
-	if err != http.ErrServerClosed {
-		return err
+	// Startup application
+	if bundle.Lifecycle != nil {
+		if err := bundle.Lifecycle.Startup(&bundle); err != nil {
+			return err
+		}
+	}
+
+	server.serv.RegisterOnShutdown(func() {
+		// Shutdown application
+		if bundle.Lifecycle != nil {
+			if err := bundle.Lifecycle.Shutdown(&bundle); err != nil {
+				server.log.WithError(err).Error("")
+			}
+		}
+
+		server.log.WithField("listen_addr", listenAddr).Info("Stopping server")
+	})
+
+	// Start the server
+	server.log.WithField("listen_addr", listenAddr).Info("Starting server")
+	if err := server.serv.ListenAndServe(); err != nil {
+		// Ignore server closed error.
+		if err != http.ErrServerClosed {
+			return err
+		}
 	}
 
 	return nil
+}
+
+// Stop the running server.
+func (server *Server) Stop() {
+	if server.serv != nil {
+		server.serv.Shutdown(nil)
+	}
 }
 
 // Prepares the server for start.

@@ -1,10 +1,10 @@
 package test_todo
 
 import (
-	"gopkg.in/workanator/vuego.v1/app"
 	"gopkg.in/workanator/vuego.v1/app/session"
 	"gopkg.in/workanator/vuego.v1/html"
 	"gopkg.in/workanator/vuego.v1/mvc/model"
+	"gopkg.in/workanator/vuego.v1/mvc/view"
 	"gopkg.in/workanator/vuego.v1/theme/vuetify"
 	"gopkg.in/workanator/vuego.v1/ui"
 	"gopkg.in/workanator/vuego.v1/ui/layout"
@@ -13,7 +13,7 @@ import (
 
 type reprManager struct{}
 
-func (reprManager) Representation(sess *session.Session) (scr *app.Screen, err error) {
+func (reprManager) Representation(sess *session.Session) (scr *view.Screen, err error) {
 	body := &vuetify.App{
 		Tag: ui.Tag{
 			Id: "app",
@@ -37,7 +37,7 @@ func (reprManager) Representation(sess *session.Session) (scr *app.Screen, err e
 		&vue.Vue{Id: "state", Data: m2},
 	}
 
-	return &app.Screen{
+	return &view.Screen{
 		Id:     "list",
 		Name:   "list",
 		Title:  "To-Do List",

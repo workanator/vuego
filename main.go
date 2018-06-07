@@ -28,14 +28,18 @@ func main() {
 	defer close(serverErrorChan)
 
 	// Start the server
+	var serv atomic.Value
 	atomic.AddInt32(&partsRunning, 1)
 	go func() {
 		defer atomic.AddInt32(&partsRunning, -1)
 
-		err := server.Server{
+		srv := &server.Server{
 			ListenIP:   net.ParseIP("127.0.0.1"),
 			ListenPort: 8008,
-		}.Start(test_todo.Bundle())
+		}
+		serv.Store(srv)
+
+		err := srv.Start(test_todo.Bundle())
 
 		// Send the error.
 		serverErrorChan <- err
@@ -86,6 +90,10 @@ func main() {
 		case signal := <-sigint:
 			logrus.WithField("signal", signal).Info("Caught signal")
 			interrupt = true
+
+			if srv, ok := serv.Load().(*server.Server); ok && srv != nil {
+				srv.Stop()
+			}
 		}
 
 		// Check if all parts finished
