@@ -18,7 +18,8 @@ func (e *Event) Conforms(target, name string) bool {
 const (
 	CategorySystem EventCategory = "system"
 	CategoryModel  EventCategory = "model"
-	CategoryEvent  EventCategory = "event"
+	CategoryDom    EventCategory = "dom"
+	CategoryUser   EventCategory = "user"
 )
 
 type EventCategory string
@@ -33,12 +34,17 @@ func (ec EventCategory) IsModel() bool {
 	return ec == CategoryModel
 }
 
-// Test if the event category is event
-func (ec EventCategory) IsEvent() bool {
-	return ec == CategoryEvent
+// Test if the event category is DOM
+func (ec EventCategory) IsDom() bool {
+	return ec == CategoryDom
+}
+
+// Test if the event category is user
+func (ec EventCategory) IsUser() bool {
+	return ec == CategoryUser
 }
 
 // Test if the event category is custom
 func (ec EventCategory) IsCustom() bool {
-	return ec != CategorySystem && ec != CategoryModel && ec != CategoryEvent
+	return ec != CategorySystem && ec != CategoryModel && ec != CategoryDom && ec != CategoryUser
 }

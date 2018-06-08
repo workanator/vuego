@@ -9,7 +9,7 @@ import (
 type AppClass struct{}
 
 func (AppClass) Class() string             { return "App" }
-func (AppClass) ExtendedClass() ui.Classer { return ui.ComponentClass{} }
+func (AppClass) ExtendedClass() ui.Classer { return ui.ElClass{} }
 
 // Vuetify Application.
 type App struct {

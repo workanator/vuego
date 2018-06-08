@@ -10,6 +10,6 @@ type Session struct {
 	Context  context.Context
 	Id       string
 	User     *User
-	State    interface{}
+	Data     interface{}
 	EventBus event.Bus
 }

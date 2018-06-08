@@ -21,7 +21,6 @@ func Bundle() app.Bundle {
 		Version: "1.0",
 		Fs:      &facade.MultiFS{},
 		Lifecycle: app.LifecycleFunc(func(starting bool, b *app.Bundle) error {
-			println(starting)
 			return nil
 		}),
 		Sessions: &facade.MultiSession{
@@ -34,7 +33,7 @@ func Bundle() app.Bundle {
 						Context: context.Background(),
 						Id:      sessId,
 						User:    nil,
-						State:   nil,
+						Data:    nil,
 					}, nil
 				}),
 			},

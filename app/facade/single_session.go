@@ -63,7 +63,7 @@ func (ss *SingleSession) Resolve(r *http.Request) (*session.Session, error) {
 			Context:  ss.Context,
 			Id:       ss.Id,
 			User:     ss.User,
-			State:    ss.State,
+			Data:     ss.State,
 			EventBus: ss.EventBus,
 		}
 	}

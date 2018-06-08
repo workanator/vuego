@@ -7,7 +7,7 @@ type ItemRenderer interface {
 	html.Renderer
 
 	// Items returns the slice of child components.
-	Items() []Componenter
+	Items() []Component
 
 	// Len returns the number of child items.
 	Len() int

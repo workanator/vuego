@@ -7,7 +7,7 @@ import (
 	"gopkg.in/workanator/vuego.v1/ui"
 )
 
-type Vert []ui.Componenter
+type Vert []ui.Component
 
 func (l Vert) Render(parent *html.Element, viewport html.Rect) (*html.Element, error) {
 	// Return nil if there are no children.
@@ -35,7 +35,7 @@ func (l Vert) Render(parent *html.Element, viewport html.Rect) (*html.Element, e
 	}, nil
 }
 
-func (l Vert) Items() []ui.Componenter {
+func (l Vert) Items() []ui.Component {
 	return l
 }
 

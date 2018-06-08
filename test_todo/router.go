@@ -22,6 +22,12 @@ func (router) Route(sess *session.Session, route string) (scr *view.Screen, err 
 		Children: layout.Vert{
 			&ui.Text{
 				Text: "Application says '{{message}}'",
+				Events: ui.Listeners{
+					"click": ui.HandlerFunc(func(cmp ui.Component, data interface{}) error {
+						println("Clicked text")
+						return nil
+					}),
+				},
 			},
 		},
 	}

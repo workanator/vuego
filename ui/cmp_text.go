@@ -6,7 +6,7 @@ import "gopkg.in/workanator/vuego.v1/html"
 type TextClass struct{}
 
 func (TextClass) Class() string          { return "Text" }
-func (TextClass) ExtendedClass() Classer { return ComponentClass{} }
+func (TextClass) ExtendedClass() Classer { return ElClass{} }
 
 // Type of the text container.
 const (
@@ -24,8 +24,9 @@ type TextType uint8
 type Text struct {
 	Tag
 	Bounds
-	Text string
-	Type TextType
+	Text   string
+	Type   TextType
+	Events EventHandler
 }
 
 // Get class name.
@@ -77,3 +78,12 @@ func (txt *Text) Render(parent *html.Element, viewport html.Rect) (*html.Element
 
 // Impose attributes to HTML Element.
 func (Text) Impose(el *html.Element) {}
+
+// Implement Component interface.
+func (t *Text) ProcessEvent(recipient, event string, data interface{}) (processed bool, err error) {
+	if t.Tag.Id.Equal(recipient) {
+		processed, err = true, t.Events.HandleEvent(t, event, data)
+	}
+
+	return processed, err
+}

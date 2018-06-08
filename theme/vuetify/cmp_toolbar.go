@@ -9,7 +9,7 @@ import (
 type ToolbarClass struct{}
 
 func (ToolbarClass) Class() string             { return "Toolbar" }
-func (ToolbarClass) ExtendedClass() ui.Classer { return ui.ComponentClass{} }
+func (ToolbarClass) ExtendedClass() ui.Classer { return ui.ElClass{} }
 
 // Vuetify Toolbar.
 type Toolbar struct {
