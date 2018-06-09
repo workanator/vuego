@@ -108,3 +108,8 @@ func (app *App) Render(parent *html.Element, viewport html.Rect) (*html.Element,
 
 	return el, nil
 }
+
+// Implement Component interface.
+func (app *App) Process(recipient, event string, data interface{}) (processed bool, err error) {
+	return processed, err
+}

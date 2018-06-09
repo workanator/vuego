@@ -1,9 +1,7 @@
 package server
 
 import (
-	"time"
-
-	"gopkg.in/workanator/vuego.v1/app/event"
+	"gopkg.in/workanator/vuego.v1/event"
 )
 
 const (
@@ -16,9 +14,8 @@ const (
 
 var (
 	evClientClosedWebSocket = event.Event{
-		Target:   targetBus,
 		Category: event.CategorySystem,
+		Target:   targetBus,
 		Name:     nameWsClosed,
-		Time:     time.Now(),
 	}
 )

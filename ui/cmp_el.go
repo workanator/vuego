@@ -30,6 +30,6 @@ func (El) Render(parent *html.Element, viewport html.Rect) (*html.Element, error
 func (El) Impose(el *html.Element) {}
 
 // Implement Component interface. Always return the event is not processed.
-func (El) ProcessEvent(recipient, event string, data interface{}) (processed bool, err error) {
+func (El) Process(recipient, event string, data interface{}) (processed bool, err error) {
 	return false, nil
 }

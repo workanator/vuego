@@ -5,8 +5,8 @@ import (
 
 	"context"
 
-	"gopkg.in/workanator/vuego.v1/app/event"
 	"gopkg.in/workanator/vuego.v1/app/session"
+	"gopkg.in/workanator/vuego.v1/event"
 )
 
 // MultiSessions supports multiple sessions with persistence mechanism provided by session Store. By default

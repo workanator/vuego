@@ -3,7 +3,7 @@ package facade
 import (
 	"context"
 
-	"gopkg.in/workanator/vuego.v1/app/event"
+	"gopkg.in/workanator/vuego.v1/event"
 )
 
 const (

@@ -26,7 +26,7 @@ type Text struct {
 	Bounds
 	Text   string
 	Type   TextType
-	Events EventHandler
+	Events EventRouter
 }
 
 // Get class name.
@@ -80,9 +80,9 @@ func (txt *Text) Render(parent *html.Element, viewport html.Rect) (*html.Element
 func (Text) Impose(el *html.Element) {}
 
 // Implement Component interface.
-func (t *Text) ProcessEvent(recipient, event string, data interface{}) (processed bool, err error) {
+func (t *Text) Process(recipient, name string, data interface{}) (processed bool, err error) {
 	if t.Tag.Id.Equal(recipient) {
-		processed, err = true, t.Events.HandleEvent(t, event, data)
+		processed, err = true, t.Events.RouteEvent(t, name, data)
 	}
 
 	return processed, err

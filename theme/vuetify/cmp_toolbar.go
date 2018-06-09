@@ -108,3 +108,8 @@ func (tb *Toolbar) Impose(el *html.Element) {
 		}
 	}
 }
+
+// Implement Component interface.
+func (tb *Toolbar) Process(recipient, event string, data interface{}) (processed bool, err error) {
+	return processed, err
+}
