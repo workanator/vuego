@@ -51,7 +51,7 @@ func main() {
 		defer atomic.AddInt32(&partsRunning, -1)
 
 		err := browser.Lauch(
-			"http://127.0.0.1:8008/app",
+			"http://127.0.0.1:8008",
 			&browser.Options{
 				NewInstance: false,
 				Window: browser.WindowOptions{

@@ -6,6 +6,7 @@
     <link href="/static/css/vuetify.min.css" rel="stylesheet">
     <script src="/static/js/vue.min.js"></script>
     <script src="/static/js/vuetify.min.js"></script>
+    <script src="/static/js/vuego.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
     #HEAD#
 </head>
@@ -13,44 +14,16 @@
     #BODY#
     #MODEL#
     <script>
-        let wsRead = new WebSocket('ws://' + window.location.host + '/ws', 'Bus.Read');
-        wsRead.onmessage = function (ev) {
-            console.info('Message');
+        Vuego.Bus.connect();
+        Vuego.Bus.send({data:"classy"});
+
+        /*
             for (let k in Model) {
                 if (Model[k].hasOwnProperty("message")) {
                     Model[k].message = JSON.parse(ev.data).data;
                 }
             }
-        };
-        wsRead.onopen = function (ev) {
-            console.info('Connected');
-            wsRead.send("Can we talk?");
-            wsRead.send(JSON.stringify({data:"HELLO!?"}));
-        };
-        wsRead.onclose = function (ev) {
-            console.info('Closed');
-        };
-        wsRead.onerror = function (ev) {
-            console.info("Error");
-            console.info(ev)
-        };
-
-        let wsWrite = new WebSocket('ws://' + window.location.host + '/ws', 'Bus.Write');
-        wsWrite.onmessage = function (ev) {
-            console.info('Message');
-        };
-        wsWrite.onopen = function (ev) {
-            console.info('Connected');
-            wsWrite.send("Can we talk?");
-            wsWrite.send(JSON.stringify({data:"HELLO!?"}));
-        };
-        wsWrite.onclose = function (ev) {
-            console.info('Closed');
-        };
-        wsWrite.onerror = function (ev) {
-            console.info("Error");
-            console.info(ev)
-        };
+        */
     </script>
 </body>
 </html>

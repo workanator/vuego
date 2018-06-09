@@ -11,6 +11,12 @@ import (
 	"gopkg.in/workanator/vuego.v1/session"
 )
 
+const (
+	RouteApp    = "app"
+	RouteBus    = "bus"
+	RouteStatic = "static"
+)
+
 // Implement http.Handler interface.
 func (server *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
@@ -42,6 +48,7 @@ func (server *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	})
 	segments := strings.Split(uri, "/")
 
+	// Redirect to /app
 	if len(segments) == 0 {
 		w.WriteHeader(http.StatusNoContent)
 		return
@@ -49,20 +56,33 @@ func (server *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// Server the request
 	switch segments[0] {
-	case "app":
+	case "":
+		to := "/" + RouteApp
+		server.log.WithField("to", to).Debug("Redirect")
+		w.Header().Set("Location", to)
+		w.WriteHeader(http.StatusMovedPermanently)
+		return
+
+	case RouteApp:
+		// Build application action
+		action := ""
+		if len(segments) > 1 {
+			action = strings.Join(segments[1:], "/")
+		}
+
 		// Load application template and pass the handler
 		if tpl, err := server.readFileContent("html/app.html"); err != nil {
 			server.renderError(w, r, err)
-		} else if err := server.handleApp(w, r, sess, tpl); err != nil {
+		} else if err := server.handleApp(w, r, sess, action, tpl); err != nil {
 			server.renderError(w, r, err)
 		}
 		return
 
-	case "ws":
+	case RouteBus:
 		server.ws.ServeHTTP(w, r)
 		return
 
-	case "static":
+	case RouteStatic:
 		if len(segments) > 1 {
 			path := strings.Join(segments[1:], "/")
 
