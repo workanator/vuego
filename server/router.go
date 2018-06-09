@@ -8,7 +8,7 @@ import (
 	_ "gopkg.in/workanator/vuego.v1/resource"
 
 	"github.com/sirupsen/logrus"
-	"gopkg.in/workanator/vuego.v1/app/session"
+	"gopkg.in/workanator/vuego.v1/session"
 )
 
 // Implement http.Handler interface.

@@ -1,19 +1,19 @@
 package test_todo
 
 import (
-	"gopkg.in/workanator/vuego.v1/app/session"
 	"gopkg.in/workanator/vuego.v1/html"
-	"gopkg.in/workanator/vuego.v1/mvc/model"
-	"gopkg.in/workanator/vuego.v1/mvc/view"
+	"gopkg.in/workanator/vuego.v1/model"
+	"gopkg.in/workanator/vuego.v1/session"
 	"gopkg.in/workanator/vuego.v1/theme/vuetify"
 	"gopkg.in/workanator/vuego.v1/ui"
 	"gopkg.in/workanator/vuego.v1/ui/layout"
+	"gopkg.in/workanator/vuego.v1/view"
 	"gopkg.in/workanator/vuego.v1/vue"
 )
 
 type router struct{}
 
-func (router) Route(sess *session.Session, route string) (scr *view.Screen, err error) {
+func (router) Respond(sess *session.Session, action string) (scr *view.Screen, err error) {
 	body := &vuetify.App{
 		Tag: ui.Tag{
 			Id: "app",
@@ -23,7 +23,7 @@ func (router) Route(sess *session.Session, route string) (scr *view.Screen, err 
 			&ui.Text{
 				Text: "Application says '{{message}}'",
 				Events: ui.Listeners{
-					"click": ui.HandlerFunc(func(cmp ui.Component, data interface{}) error {
+					ui.OnClick: ui.HandlerFunc(func(cmp ui.Component, data interface{}) error {
 						println("Clicked text")
 						return nil
 					}),

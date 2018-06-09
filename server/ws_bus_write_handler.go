@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 
 	"golang.org/x/net/websocket"
-	"gopkg.in/workanator/vuego.v1/app/session"
 	"gopkg.in/workanator/vuego.v1/event"
+	"gopkg.in/workanator/vuego.v1/session"
 )
 
 const (

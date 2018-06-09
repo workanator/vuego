@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"gopkg.in/workanator/vuego.v1/html"
-	"gopkg.in/workanator/vuego.v1/mvc/model"
+	"gopkg.in/workanator/vuego.v1/model"
 )
 
 type Vue struct {

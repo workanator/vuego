@@ -7,13 +7,13 @@ import (
 	"net/http"
 	"strings"
 
-	"gopkg.in/workanator/vuego.v1/app/session"
 	"gopkg.in/workanator/vuego.v1/html"
+	"gopkg.in/workanator/vuego.v1/session"
 )
 
 func (server *Server) handleApp(w http.ResponseWriter, r *http.Request, sess *session.Session, tpl []byte) error {
 	// Get the screen
-	screen, err := server.bundle.Routes.Route(sess, "")
+	screen, err := server.bundle.Actions.Respond(sess, "")
 	if err != nil {
 		return err
 	}

@@ -9,7 +9,7 @@ import (
 
 	"gopkg.in/workanator/vuego.v1/app"
 	"gopkg.in/workanator/vuego.v1/app/facade"
-	"gopkg.in/workanator/vuego.v1/app/session"
+	"gopkg.in/workanator/vuego.v1/session"
 )
 
 func Bundle() app.Bundle {
@@ -39,6 +39,6 @@ func Bundle() app.Bundle {
 			},
 			EventBus: reactor,
 		},
-		Routes: &router{},
+		Actions: &router{},
 	}
 }

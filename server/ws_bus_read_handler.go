@@ -6,8 +6,8 @@ import (
 	"io"
 
 	"golang.org/x/net/websocket"
-	"gopkg.in/workanator/vuego.v1/app/session"
 	"gopkg.in/workanator/vuego.v1/event"
+	"gopkg.in/workanator/vuego.v1/session"
 )
 
 // The function works on protocol Bus.Write which is one way delivery protocol where events

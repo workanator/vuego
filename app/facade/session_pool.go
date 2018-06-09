@@ -3,7 +3,7 @@ package facade
 import (
 	"sync"
 
-	"gopkg.in/workanator/vuego.v1/app/session"
+	"gopkg.in/workanator/vuego.v1/session"
 )
 
 // SessionPool implements session.Store interface and provides in-memoty session store based on sync.Map.
