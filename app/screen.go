@@ -1,4 +1,4 @@
-package view
+package app
 
 import (
 	"gopkg.in/workanator/vuego.v1/html"

@@ -1,19 +1,19 @@
 package test_todo
 
 import (
+	"gopkg.in/workanator/vuego.v1/app"
 	"gopkg.in/workanator/vuego.v1/html"
 	"gopkg.in/workanator/vuego.v1/model"
 	"gopkg.in/workanator/vuego.v1/session"
 	"gopkg.in/workanator/vuego.v1/theme/vuetify"
 	"gopkg.in/workanator/vuego.v1/ui"
 	"gopkg.in/workanator/vuego.v1/ui/layout"
-	"gopkg.in/workanator/vuego.v1/view"
 	"gopkg.in/workanator/vuego.v1/vue"
 )
 
 type router struct{}
 
-func (router) Respond(sess *session.Session, action string) (scr *view.Screen, err error) {
+func (router) Screen(sess *session.Session, route string) (scr *app.Screen, err error) {
 	body := &vuetify.App{
 		Tag: ui.Tag{
 			Id: "app",
@@ -43,7 +43,7 @@ func (router) Respond(sess *session.Session, action string) (scr *view.Screen, e
 		&vue.Vue{Id: "state", Data: m2},
 	}
 
-	return &view.Screen{
+	return &app.Screen{
 		Id:     "list",
 		Name:   "list",
 		Title:  "To-Do List",

@@ -48,7 +48,7 @@ func (server *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	})
 	segments := strings.Split(uri, "/")
 
-	// Redirect to /app
+	// Should not happen
 	if len(segments) == 0 {
 		w.WriteHeader(http.StatusNoContent)
 		return
@@ -57,6 +57,7 @@ func (server *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Server the request
 	switch segments[0] {
 	case "":
+		// Redirect to application start screen
 		to := "/" + RouteApp
 		server.log.WithField("to", to).Debug("Redirect")
 		w.Header().Set("Location", to)
@@ -64,18 +65,30 @@ func (server *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 
 	case RouteApp:
-		// Build application action
+		// Build route from tokens after /app
 		action := ""
 		if len(segments) > 1 {
 			action = strings.Join(segments[1:], "/")
 		}
 
-		// Load application template and pass the handler
-		if tpl, err := server.readFileContent("html/app.html"); err != nil {
-			server.renderError(w, r, err)
-		} else if err := server.handleApp(w, r, sess, action, tpl); err != nil {
-			server.renderError(w, r, err)
+		// Render screen or process action
+		switch r.Method {
+		case "GET":
+			// GET method is for rendering content
+			// Load application template and pass the handler
+			if tpl, err := server.readFileContent("html/app.html"); err != nil {
+				server.renderError(w, r, err)
+			} else if err := server.renderAppScreen(w, sess, action, tpl); err != nil {
+				server.renderError(w, r, err)
+			}
+
+		default:
+			// Other methods are actions
+			if err := server.respondAppAction(w, sess, action); err != nil {
+				server.renderError(w, r, err) // TODO: Return JSON error
+			}
 		}
+
 		return
 
 	case RouteBus:

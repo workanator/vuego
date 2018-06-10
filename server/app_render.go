@@ -11,14 +11,9 @@ import (
 	"gopkg.in/workanator/vuego.v1/session"
 )
 
-func (server *Server) handleApp(
-	w http.ResponseWriter,
-	r *http.Request,
-	sess *session.Session,
-	action string,
-	tpl []byte) error {
+func (server *Server) renderAppScreen(w http.ResponseWriter, sess *session.Session, route string, tpl []byte) error {
 	// Get the screen
-	screen, err := server.bundle.Actions.Respond(sess, action)
+	screen, err := server.bundle.Routes.Screen(sess, route)
 	if err != nil {
 		return err
 	}

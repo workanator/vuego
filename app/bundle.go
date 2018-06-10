@@ -14,5 +14,6 @@ type Bundle struct {
 	Lifecycle Lifecycle
 	Fs        http.FileSystem
 	Sessions  session.Resolver
+	Routes    Screener
 	Actions   action.Responder
 }

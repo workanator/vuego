@@ -12,14 +12,14 @@ const Vuego = {
             let wsRead = new WebSocket('ws://' + window.location.host + '/bus', 'Bus.Read');
             wsRead.onmessage = function (ev) { instance._ReadQueue.push(JSON.parse(ev.data)) };
             wsRead.onopen = function (ev) { instance._Read = wsRead };
-            wsRead.onclose = function (ev) {};
+            wsRead.onclose = function (ev) { instance._Read = null };
             wsRead.onerror = function (ev) {};
 
             // Connect Bus.Write endpoint.
             let wsWrite = new WebSocket('ws://' + window.location.host + '/bus', 'Bus.Write');
             wsWrite.onmessage = function (ev) {};
             wsWrite.onopen = function (ev) { instance._Write = wsWrite };
-            wsWrite.onclose = function (ev) {};
+            wsWrite.onclose = function (ev) { instance._Write = null };
             wsWrite.onerror = function (ev) {};
         },
 
