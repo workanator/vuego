@@ -1,6 +1,9 @@
 package ui
 
-import "gopkg.in/workanator/vuego.v1/html"
+import (
+	"gopkg.in/workanator/vuego.v1/html"
+	"gopkg.in/workanator/vuego.v1/session"
+)
 
 // Class of the El.
 type ElClass struct{}
@@ -26,10 +29,7 @@ func (El) Render(parent *html.Element, viewport html.Rect) (*html.Element, error
 	return nil, nil
 }
 
-// Impose attributes to HTML Element.
-func (El) Impose(el *html.Element) {}
-
 // Implement Component interface. Always return the event is not processed.
-func (El) Process(recipient, event string, data interface{}) (processed bool, err error) {
+func (El) MarshalEvent(sess *session.Session, target, name string, data interface{}) (processed bool, err error) {
 	return false, nil
 }

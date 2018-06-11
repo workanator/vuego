@@ -1,6 +1,9 @@
 package ui
 
-import "gopkg.in/workanator/vuego.v1/html"
+import (
+	"gopkg.in/workanator/vuego.v1/html"
+	"gopkg.in/workanator/vuego.v1/session"
+)
 
 // Class of the Text.
 type TextClass struct{}
@@ -80,9 +83,9 @@ func (txt *Text) Render(parent *html.Element, viewport html.Rect) (*html.Element
 func (Text) Impose(el *html.Element) {}
 
 // Implement Component interface.
-func (t *Text) Process(recipient, name string, data interface{}) (processed bool, err error) {
-	if t.Tag.Id.Equal(recipient) {
-		processed, err = true, t.Events.RouteEvent(t, name, data)
+func (t *Text) MarshalEvent(sess *session.Session, target, name string, data interface{}) (processed bool, err error) {
+	if t.Tag.Id.Equal(target) {
+		processed, err = true, t.Events.RouteEvent(sess, t, name, data)
 	}
 
 	return processed, err
