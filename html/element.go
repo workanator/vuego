@@ -12,6 +12,7 @@ type Element struct {
 	Style     Style
 	Attribute Attribute
 	Inner     Markuper
+	Chain     Markuper
 }
 
 func (el *Element) Markup() (string, error) {
@@ -98,6 +99,18 @@ func (el *Element) Markup() (string, error) {
 	}
 
 	markup.WriteRune('>')
+
+	if el.Chain != nil {
+		if chainMarkup, err := el.Chain.Markup(); err != nil {
+			return "", ErrMarkupFailed{
+				Tag:    el.Tag,
+				Id:     el.Id.String(),
+				Reason: err,
+			}
+		} else {
+			markup.WriteString(chainMarkup)
+		}
+	}
 
 	return markup.String(), nil
 }

@@ -9,7 +9,7 @@ import (
 )
 
 type Vue struct {
-	Id   string
+	Id   html.Id
 	Data model.ModelPropertier
 }
 
@@ -44,6 +44,7 @@ func (v *Vue) SetProperty(name string, value interface{}) {
 func (v *Vue) Markup() (string, error) {
 	// Build Vue instance initializer
 	sb := strings.Builder{}
+	props := 0
 
 	// Open the initializer
 	sb.WriteString("new Vue({")
@@ -53,7 +54,7 @@ func (v *Vue) Markup() (string, error) {
 		el, _ := json.Marshal("#" + v.Id)
 		sb.WriteString("el:")
 		sb.WriteString(string(el))
-		sb.WriteRune(',')
+		props++
 	}
 
 	// Add data property
@@ -65,6 +66,10 @@ func (v *Vue) Markup() (string, error) {
 					Reason: err,
 				}
 			} else {
+				if props > 0 {
+					sb.WriteRune(',')
+				}
+
 				sb.WriteString("data:")
 				sb.WriteString(string(json))
 			}

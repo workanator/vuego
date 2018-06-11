@@ -2,7 +2,10 @@ package vuetify
 
 import (
 	"gopkg.in/workanator/vuego.v1/html"
+	"gopkg.in/workanator/vuego.v1/model"
+	"gopkg.in/workanator/vuego.v1/session"
 	"gopkg.in/workanator/vuego.v1/ui"
+	"gopkg.in/workanator/vuego.v1/vue"
 )
 
 // Class of the App.
@@ -101,15 +104,29 @@ func (app *App) Render(parent *html.Element, viewport html.Rect) (*html.Element,
 		appEl.Inner = html.Multiple(items)
 	}
 
+	// Follow with script tag with Vue instance
+	// TODO: Should that be automated?
+	scriptEl := &html.Element{
+		Tag: "script",
+		Inner: html.Multiple{
+			html.Text("Vuego.App = "),
+			&vue.Vue{
+				Id:   app.Tag.Id,
+				Data: &model.Container{},
+			},
+		},
+	}
+
 	// Create application container element
 	el := app.Tag.Element()
 	el.Tag = "div"
 	el.Inner = appEl
+	el.Chain = scriptEl
 
 	return el, nil
 }
 
 // Implement Component interface.
-func (app *App) Process(recipient, event string, data interface{}) (processed bool, err error) {
+func (app *App) MarshalEvent(sess *session.Session, target, event string, data interface{}) (processed bool, err error) {
 	return processed, err
 }
