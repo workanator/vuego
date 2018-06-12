@@ -75,10 +75,7 @@ func (server *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case "GET":
 			// GET method is for rendering content
-			// Load application template and pass the handler
-			if tpl, err := server.readFileContent("html/app.html"); err != nil {
-				server.renderError(w, r, err)
-			} else if err := server.renderAppScreen(w, sess, action, tpl); err != nil {
+			if err := server.renderAppScreen(w, sess, action); err != nil {
 				server.renderError(w, r, err)
 			}
 
@@ -99,7 +96,7 @@ func (server *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if len(segments) > 1 {
 			path := strings.Join(segments[1:], "/")
 
-			if f, err := server.openFile(path); err != nil {
+			if f, err := server.fs.Open(path); err != nil {
 				w.WriteHeader(http.StatusNotFound)
 				w.Write([]byte(err.Error()))
 			} else {

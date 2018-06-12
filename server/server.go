@@ -18,7 +18,7 @@ type Server struct {
 	ListenIP   net.IP
 	ListenPort uint16
 	bundle     app.Bundle
-	fs         http.FileSystem
+	fs         multiFs
 	log        *logrus.Entry
 	serv       *http.Server
 	ws         *websocket.Server
@@ -82,7 +82,11 @@ func (server *Server) Stop() {
 // Prepares the server for start.
 func (server *Server) prepare() error {
 	// Initialize private members
-	server.fs = parcello.Root("/")
+	server.fs = multiFs{parcello.Root("/")}
+	if server.bundle.Fs != nil {
+		server.fs = append(server.fs, server.bundle.Fs)
+	}
+
 	server.log = logrus.NewEntry(logrus.StandardLogger())
 
 	// Initialize WebSocket server.

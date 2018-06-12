@@ -1,17 +1,17 @@
 package test_todo
 
 import (
-	"gopkg.in/workanator/vuego.v1/app"
 	"gopkg.in/workanator/vuego.v1/session"
 	"gopkg.in/workanator/vuego.v1/theme/vuetify"
 	"gopkg.in/workanator/vuego.v1/ui"
 	"gopkg.in/workanator/vuego.v1/ui/layout"
+	"gopkg.in/workanator/vuego.v1/view"
 )
 
 type router struct{}
 
-func (router) Screen(sess *session.Session, route string) (scr *app.Screen, err error) {
-	body := &vuetify.App{
+func (router) Find(sess *session.Session, route string) (v *view.View, err error) {
+	content := &vuetify.App{
 		Tag: ui.Tag{
 			Id: "app",
 		},
@@ -29,8 +29,9 @@ func (router) Screen(sess *session.Session, route string) (scr *app.Screen, err 
 		},
 	}
 
-	return &app.Screen{
-		Title: "To-Do List",
-		Root:  body,
+	return &view.View{
+		Template: view.TemplatePage,
+		Title:    "To-Do List",
+		Content:  content,
 	}, nil
 }

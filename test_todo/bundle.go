@@ -39,6 +39,6 @@ func Bundle() app.Bundle {
 			},
 			EventBus: reactor,
 		},
-		Routes: &router{},
+		Views: &router{},
 	}
 }
