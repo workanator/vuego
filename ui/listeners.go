@@ -12,7 +12,7 @@ func (eh Listeners) RouteEvent(sess *session.Session, cmp Component, name string
 
 	// Call the handler if exists
 	if handler := eh[Event(name)]; handler != nil {
-		return handler.HandleEvent(sess, cmp, data)
+		return handler(sess, cmp, data)
 	}
 
 	return nil

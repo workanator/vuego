@@ -20,10 +20,10 @@ func (router) Find(sess *session.Session, route string) (v *view.View, err error
 			&ui.Text{
 				Text: "Application says '{{message}}'",
 				Events: ui.Listeners{
-					ui.OnClick: ui.HandlerFunc(func(sess *session.Session, cmp ui.Component, data interface{}) error {
+					ui.OnClick: func(sess *session.Session, cmp ui.Component, data interface{}) error {
 						println("Clicked text")
 						return nil
-					}),
+					},
 				},
 			},
 		},
