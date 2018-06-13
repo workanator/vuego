@@ -17,13 +17,13 @@ func (router) Find(sess *session.Session, route string) (v *view.View, err error
 		},
 		Appearance: vuetify.Dark,
 		Children: layout.Vert{
-			&ui.Text{
-				Text: "Application says '{{message}}'",
+			&ui.Html{
+				Content: "<p>Application says 'message'</p>",
 				Events: ui.Listeners{
-					ui.OnClick: func(sess *session.Session, cmp ui.Component, data interface{}) error {
+					ui.OnClick: ui.Handle(func(sess *session.Session, cmp ui.Component, data interface{}) error {
 						println("Clicked text")
 						return nil
-					},
+					}),
 				},
 			},
 		},

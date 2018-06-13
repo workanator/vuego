@@ -1,8 +1,12 @@
 package ui
 
+const (
+	OnClick Event = "onclick"
+)
+
 // The predefined set of possible events running in UI.
 type Event string
 
-const (
-	OnClick Event = "click"
-)
+func (e Event) String() string {
+	return string(e)
+}
