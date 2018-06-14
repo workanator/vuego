@@ -17,4 +17,5 @@ type Bundle struct {
 	Sessions  session.Resolver
 	Views     view.Finder
 	Actions   action.Responder
+	Flow      view.Flow
 }

@@ -8,9 +8,9 @@ import (
 	"os/signal"
 
 	"github.com/sirupsen/logrus"
+	"gopkg.in/workanator/vuego.v1/app/examples/todo"
 	"gopkg.in/workanator/vuego.v1/browser"
 	"gopkg.in/workanator/vuego.v1/server"
-	"gopkg.in/workanator/vuego.v1/test_todo"
 )
 
 func main() {
@@ -39,7 +39,7 @@ func main() {
 		}
 		serv.Store(srv)
 
-		err := srv.Start(test_todo.Bundle())
+		err := srv.Start(todo.Bundle())
 
 		// Send the error.
 		serverErrorChan <- err
