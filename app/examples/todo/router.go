@@ -1,4 +1,4 @@
-package test_todo
+package todo
 
 import (
 	"gopkg.in/workanator/vuego.v1/session"

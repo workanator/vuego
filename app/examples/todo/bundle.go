@@ -1,4 +1,4 @@
-package test_todo
+package todo
 
 import (
 	"net/http"
@@ -40,5 +40,6 @@ func Bundle() app.Bundle {
 			EventBus: reactor,
 		},
 		Views: &router{},
+		Flow:  &facade.ViewStack{},
 	}
 }
