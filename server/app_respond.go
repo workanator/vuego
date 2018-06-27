@@ -5,14 +5,15 @@ import (
 
 	"encoding/json"
 
+	"gopkg.in/workanator/vuego.v1/action"
 	"gopkg.in/workanator/vuego.v1/session"
 )
 
-func (server *Server) respondAppAction(w http.ResponseWriter, sess *session.Session, action string) (err error) {
+func (server *Server) respondAppAction(w http.ResponseWriter, sess *session.Session, act *action.Action) (err error) {
 	// Respond action
 	var response interface{}
 	if server.bundle.Actions != nil {
-		if response, err = server.bundle.Actions.Respond(sess, action); err != nil {
+		if response, err = server.bundle.Actions.Respond(sess, act); err != nil {
 			return err
 		}
 	}

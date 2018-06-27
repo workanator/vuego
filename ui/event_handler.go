@@ -16,5 +16,5 @@ func (h Handle) HandleEvent(sess *session.Session, cmp Component, data interface
 }
 
 func (h Handle) MarkupEvent(event Event, cmp Component) (string, error) {
-	return "Vuego.Bus.send({category:'dom',target:'test',name:'" + event.String() + "'})", nil
+	return "Vuego.Bus.send({category:'dom',target:'test',name:'" + event.String() + "',data:Vuego.Event.serialize(event)})", nil
 }

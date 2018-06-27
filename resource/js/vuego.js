@@ -39,5 +39,16 @@ const Vuego = {
         receive: function() {
             return this._ReadQueue.shift()
         }
+    },
+    // Event processing facilities
+    Event: {
+        serialize: function(e) {
+            const clone = {};
+            for (let k in e) {
+                clone[k] = e[k]
+            }
+
+            return clone
+        }
     }
 };

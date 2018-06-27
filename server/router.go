@@ -8,13 +8,16 @@ import (
 	_ "gopkg.in/workanator/vuego.v1/resource"
 
 	"github.com/sirupsen/logrus"
+	"gopkg.in/workanator/vuego.v1/action"
 	"gopkg.in/workanator/vuego.v1/session"
 )
 
 const (
-	RouteApp    = "app"
-	RouteBus    = "bus"
-	RouteStatic = "static"
+	ActionDelimiter = ":"
+	RouteApp        = "app"
+	RouteAppAction  = RouteApp + ActionDelimiter
+	RouteBus        = "bus"
+	RouteStatic     = "static"
 )
 
 // Implement http.Handler interface.
@@ -54,6 +57,8 @@ func (server *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Extract action from if URI starts from /app:
+
 	// Server the request
 	switch segments[0] {
 	case "":
@@ -65,24 +70,25 @@ func (server *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 
 	case RouteApp:
-		// Build route from tokens after /app
-		action := ""
-		if len(segments) > 1 {
-			action = strings.Join(segments[1:], "/")
-		}
+		// Make route from tokens after /app
+		route, act := server.extractAction(strings.Join(segments[1:], "/"))
 
 		// Render screen or process action
 		switch r.Method {
 		case "GET":
 			// GET method is for rendering content
-			if err := server.renderAppScreen(w, sess, action); err != nil {
+			if err := server.renderAppScreen(w, sess, route); err != nil {
 				server.renderError(w, r, err)
 			}
 
 		default:
 			// Other methods are actions
-			if err := server.respondAppAction(w, sess, action); err != nil {
-				server.renderError(w, r, err) // TODO: Return JSON error
+			if act, err := action.Parse(act); err == nil {
+				if err := server.respondAppAction(w, sess, &act); err != nil {
+					server.renderError(w, r, err) // TODO: Return JSON error
+				}
+			} else {
+				server.renderError(w, r, err)
 			}
 		}
 
@@ -127,4 +133,16 @@ func (server *Server) renderError(w http.ResponseWriter, r *http.Request, err er
 	w.Header().Set("Content-Type", "text/html")
 	w.WriteHeader(http.StatusInternalServerError)
 	w.Write([]byte(err.Error()))
+}
+
+func (server *Server) extractAction(s string) (segment, action string) {
+	if len(s) == 0 {
+		return "", ""
+	}
+
+	if pos := strings.Index(s, ActionDelimiter); pos >= 0 {
+		return s[0 : pos-1], s[pos+1 : len(s)]
+	} else {
+		return s, ""
+	}
 }

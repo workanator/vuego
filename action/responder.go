@@ -5,5 +5,5 @@ import (
 )
 
 type Responder interface {
-	Respond(sess *session.Session, action string) (resp interface{}, err error)
+	Respond(sess *session.Session, act *Action) (resp interface{}, err error)
 }
