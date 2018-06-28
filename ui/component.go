@@ -6,6 +6,7 @@ import (
 
 type Component interface {
 	Classer
+	Targeter
 	html.Renderer
 	EventMarshaler
 }

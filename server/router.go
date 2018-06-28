@@ -49,15 +49,14 @@ func (server *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	uri := strings.TrimFunc(r.RequestURI, func(r rune) bool {
 		return r == '/'
 	})
-	segments := strings.Split(uri, "/")
+	route, act := server.decomposeUri(uri)
+	segments := strings.Split(route, "/")
 
 	// Should not happen
 	if len(segments) == 0 {
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
-
-	// Extract action from if URI starts from /app:
 
 	// Server the request
 	switch segments[0] {
@@ -70,9 +69,6 @@ func (server *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 
 	case RouteApp:
-		// Make route from tokens after /app
-		route, act := server.extractAction(strings.Join(segments[1:], "/"))
-
 		// Render screen or process action
 		switch r.Method {
 		case "GET":
@@ -84,7 +80,7 @@ func (server *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		default:
 			// Other methods are actions
 			if act, err := action.Parse(act); err == nil {
-				if err := server.respondAppAction(w, sess, &act); err != nil {
+				if err := server.respondAppAction(w, sess, act); err != nil {
 					server.renderError(w, r, err) // TODO: Return JSON error
 				}
 			} else {
@@ -135,13 +131,13 @@ func (server *Server) renderError(w http.ResponseWriter, r *http.Request, err er
 	w.Write([]byte(err.Error()))
 }
 
-func (server *Server) extractAction(s string) (segment, action string) {
+func (server *Server) decomposeUri(s string) (route, action string) {
 	if len(s) == 0 {
 		return "", ""
 	}
 
 	if pos := strings.Index(s, ActionDelimiter); pos >= 0 {
-		return s[0 : pos-1], s[pos+1 : len(s)]
+		return s[:pos-1], s[pos+1:]
 	} else {
 		return s, ""
 	}

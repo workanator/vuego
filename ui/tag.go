@@ -16,6 +16,12 @@ type Tag struct {
 	Attribute html.Attribute
 }
 
+// Implement Targeter interface: return the ID of the tag, generate new if empty.
+func (t *Tag) Target() string {
+	t.CheckId()
+	return t.Id.String()
+}
+
 // Generate Id if it is empty.
 func (t *Tag) CheckId() {
 	if t.Id.IsEmpty() {
@@ -23,6 +29,7 @@ func (t *Tag) CheckId() {
 	}
 }
 
+// Return HTML element with attributes fulfilled.
 func (t *Tag) Element() *html.Element {
 	t.CheckId()
 

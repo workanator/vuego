@@ -24,6 +24,11 @@ func (El) ExtendedClass() Classer {
 	return ElClass{}
 }
 
+// Return empty target.
+func (El) Target() string {
+	return ""
+}
+
 // Render content into HTML Element.
 func (El) Render(parent *html.Element, viewport html.Rect) (*html.Element, error) {
 	return nil, nil

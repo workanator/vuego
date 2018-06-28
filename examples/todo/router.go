@@ -1,6 +1,7 @@
 package todo
 
 import (
+	"gopkg.in/workanator/vuego.v1/action"
 	"gopkg.in/workanator/vuego.v1/session"
 	"gopkg.in/workanator/vuego.v1/theme/vuetify"
 	"gopkg.in/workanator/vuego.v1/ui"
@@ -20,10 +21,11 @@ func (router) Find(sess *session.Session, route string) (v *view.View, err error
 			&ui.Html{
 				Content: "<p>Application says 'message'</p>",
 				Events: ui.Listeners{
-					ui.OnMouseMove: ui.Handle(func(sess *session.Session, cmp ui.Component, data interface{}) error {
+					ui.OnClick: ui.Handle(func(sess *session.Session, cmp ui.Component, data interface{}) error {
 						println("Clicked text")
 						return nil
 					}),
+					ui.OnDblClick: ui.Action(action.New("Say", "Hello!")),
 				},
 			},
 		},
